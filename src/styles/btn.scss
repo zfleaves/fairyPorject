@@ -1,0 +1,68 @@
+@import './variables.scss';
+
+@mixin colorBtn($color) {
+  background: $color;
+}
+
+.blue-btn {
+  @include colorBtn($blue)
+}
+
+.light-blue-btn {
+  @include colorBtn($red)
+}
+
+.red-btn {
+  @include colorBtn($red)
+}
+
+.pink-btn {
+  @include colorBtn($pink)
+}
+
+.green-btn {
+  @include colorBtn($green)
+}
+
+.tiffany-btn {
+  @include colorBtn($tiffany)
+}
+
+.yellow-btn {
+  @include colorBtn($yellow)
+}
+
+.regit-btn {
+
+}
+
+.el-button--primary{
+  min-width: 100px;
+  &.urgent {
+    background: #fff!important;
+    color: #ff5c5d!important;
+    border: 1px solid #ff5c5d!important;
+    &:hover {
+      background: #ff5c5d!important;
+      color: #fff!important;
+    }
+  }
+  &.other {
+    background: #fff!important;
+    color: #ff8c1c!important;
+    border: 1px solid #ff8c1c!important;
+    &:hover {
+      background: #ff8c1c!important;
+      color: #fff!important;
+    }
+  }
+  &.more {
+    background: #fff!important;
+    color: #248bfe!important;
+    border: 1px solid #248bfe!important;
+    &:hover {
+      background: #248bfe!important;
+      color: #fff!important;
+    }
+  }
+}
