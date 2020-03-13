@@ -634,10 +634,11 @@
                 }
             },
             setRolesList(val){
+                console.log(val)
                 if(val && val.length){
                       return val.map(v=>v.rolesName).join('、')
                 }else{
-                    return ''
+                    return ' '
                 }
               
             },
