@@ -214,7 +214,7 @@
                  <div class="membersList">
                      <p class="title">企业用户列表</p>
                      <div class="searchCon">
-                         <el-input class="input" size="small" v-model="input" placeholder="请输入姓名/手机号查询"></el-input>
+                         <el-input class="input" size="small" v-model="userInput" placeholder="请输入姓名/手机号查询"></el-input>
                          <el-button class="btn" size="small" type="warning">查询</el-button>
                      </div>
                      <el-table
@@ -233,19 +233,22 @@
                             width="60">
                         </el-table-column>
                         <el-table-column
-                            prop="rolesName"
+                            prop="userName"
                             show-overflow-tooltip
                             label="姓名">
                         </el-table-column>
                         <el-table-column
-                            prop="rolesName"
+                            prop="userCode"
                             show-overflow-tooltip
                             label="手机号">
                         </el-table-column>
                         <el-table-column
-                            prop="rolesName"
+                            prop="roles"
                             show-overflow-tooltip
                             label="所属岗位">
+                             <template slot-scope="scope">
+                               <span>{{scope.row.roles | setRolesList}}</span>
+                                </template>
                         </el-table-column>
                         </el-table>
                  </div>
@@ -255,7 +258,45 @@
                           <el-button class="btn" size="small" type="warning">确认选择</el-button>
                      </div>
                      <div>
-                         
+                         <el-table
+                        border
+                      
+                      
+                        :data="multipleSelection4"
+                        style="width: 100%">
+                        <el-table-column
+                        type="index"
+                            label="序号"
+                            width="60">
+                        </el-table-column>
+                        <el-table-column
+                            prop="userName"
+                            show-overflow-tooltip
+                            label="姓名">
+                        </el-table-column>
+                        <el-table-column
+                            prop="userCode"
+                            show-overflow-tooltip
+                            label="手机号">
+                        </el-table-column>
+                        <el-table-column
+                            prop="roles"
+                            show-overflow-tooltip
+                            label="所属岗位">
+                             <template slot-scope="scope">
+                               <span>{{scope.row.roles | setRolesList}}</span>
+                                </template>
+                        </el-table-column>
+                         <el-table-column
+                            prop=""
+                            show-overflow-tooltip
+                            label="操作">
+                              <template slot-scope="scope">
+                                <el-button @click="handleClickDelet(scope.row)" type="text" size="small">删除</el-button>
+                            
+                            </template>
+                        </el-table-column>
+                        </el-table>
                      </div>
                  </div>
              </div>
@@ -267,7 +308,8 @@
 <script>
     import Auth from 'util/auth'
     import {getPermissionProjects,getProjectsUsers,getUserMenus,
-    getRolesProject,updateUserProject,deleteUserProject,getOrgsList,getDepartmentList} from 'api/companyProject/projectMembers'
+    getRolesProject,updateUserProject,deleteUserProject,
+    getOrgsList,getDepartmentList,getRoleUsersList} from 'api/companyProject/projectMembers'
     export default {
         name:'projectMembers',
         data(){
@@ -294,8 +336,14 @@
                     children: 'children',
                     label: 'label',
                     isLeaf: 'leaf'
-                }
-
+                },
+                pageNo:1,
+                pageSize:7,
+                orgId4:'',
+                params4:'',
+                selectUserListTableData:[],
+                userInput:'',
+                multipleSelection4:[]
                 
             }
         },
@@ -509,6 +557,7 @@
             handleNodeClick(row){
                 console.log(row)
                 // return
+                this.orgId4 = row.id
                 getDepartmentList(row.id).then(res=>{
                     let departmentList = res.results
                     
@@ -529,7 +578,34 @@
 
                     this.$refs.tree.updateKeyChildren(row.id,departmentList)//更新node-key的子节点
                     console.log(this.orgsList)
+                    this._getRoleUsersList()
                 })
+            },
+            //
+            _getRoleUsersList(){
+                let data = {
+                    pageNo:this.pageNo,
+                    pageSize:this.pageSize,
+                    orgId:this.orgId4,
+                    params:this.params4
+                }
+                getRoleUsersList(data).then(res=>{
+                    this.selectUserListTableData = res.results.result
+                })
+            },
+            //
+            handleSelectionChange4(val){
+                console.log(val)
+                this.multipleSelection4 = val;
+            },
+            //删除选中的
+            handleClickDelet(row){
+                let index = this.multipleSelection4.findIndex(v=>v.id===row.id)
+                if(index>=0){
+                    this.multipleSelection4.splice(index,1)
+                    this.$refs.multipleTable4.toggleRowSelection(row,false);
+                    //  this.multipleSelection4 = this.multipleSelection4;
+                }
             },
             setArr(arr){
                 for(let i in arr){
@@ -543,6 +619,7 @@
                 }
                 return arr
             },
+
             handleExpand(item){
                 item.flag = !item.flag
             }
@@ -555,7 +632,15 @@
                 }else{
                     return ''
                 }
-            }
+            },
+            setRolesList(val){
+                if(val && val.length){
+                      return val.map(v=>v.rolesName).join('、')
+                }else{
+                    return ''
+                }
+              
+            },
         }
 
     }
@@ -734,7 +819,12 @@
                  line-height: 40px;
              }
              .selectTabelCon{
-
+                 overflow: hidden;
+                 height: 50px;
+                 padding-top: 10px;
+                 .btn{
+                     float: right;
+                 }
              }
         }
     }

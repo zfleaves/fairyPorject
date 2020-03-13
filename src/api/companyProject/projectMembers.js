@@ -75,3 +75,14 @@ export function getDepartmentList(orgId){
 
     })
 }
+
+//获得企业列表
+export function getRoleUsersList(data){
+    return request({
+        url:'/passport/org/role/users',
+        method:'get',
+        params:data
+
+    })
+}
+// ?pageNo=1&pageSize=7&orgId=378&params=
