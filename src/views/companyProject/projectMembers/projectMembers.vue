@@ -212,19 +212,47 @@
                      </el-tree>
                  </div>
                  <div class="membersList">
-                     <p>企业用户列表</p>
-                     <div>
-                         <input type="text">
-                         <button>查询</button>
+                     <p class="title">企业用户列表</p>
+                     <div class="searchCon">
+                         <el-input class="input" size="small" v-model="input" placeholder="请输入姓名/手机号查询"></el-input>
+                         <el-button class="btn" size="small" type="warning">查询</el-button>
                      </div>
-                     <div>
-
-                     </div>
+                     <el-table
+                        border
+                        ref="multipleTable4"
+                        @selection-change="handleSelectionChange4"
+                        :data="selectUserListTableData"
+                        style="width: 100%">
+                        <el-table-column
+                        type="selection"
+                        width="55">
+                        </el-table-column>
+                        <el-table-column
+                        type="index"
+                            label="序号"
+                            width="60">
+                        </el-table-column>
+                        <el-table-column
+                            prop="rolesName"
+                            show-overflow-tooltip
+                            label="姓名">
+                        </el-table-column>
+                        <el-table-column
+                            prop="rolesName"
+                            show-overflow-tooltip
+                            label="手机号">
+                        </el-table-column>
+                        <el-table-column
+                            prop="rolesName"
+                            show-overflow-tooltip
+                            label="所属岗位">
+                        </el-table-column>
+                        </el-table>
                  </div>
                  <div class="selectMembersList">
-                     <p>已选用户</p>
-                     <div>
-                         <button>确认选择</button>
+                     <p class="title">已选用户</p>
+                     <div class="selectTabelCon">
+                          <el-button class="btn" size="small" type="warning">确认选择</el-button>
                      </div>
                      <div>
                          
@@ -676,10 +704,38 @@
         .membersList{
             flex: 1;
              border: 1px #fafafa solid;
+             padding: 5px;
+             .title{
+                 border-bottom: 1px solid #fafafa;
+                 height: 40px;
+                 line-height: 40px;
+             }
+             .searchCon{
+                 overflow: hidden;
+                 height: 50px;
+                 padding-top: 10px;
+                 .input{
+                     float: left;
+                     width: 300px;
+                 }
+                 .btn{
+                     float: right;
+                     width: 100px;
+                 }
+             }
+
         }
         .selectMembersList{
             flex: 1;
              border: 1px #fafafa solid;
+             .title{
+                border-bottom: 1px solid #fafafa;
+                 height: 40px;
+                 line-height: 40px;
+             }
+             .selectTabelCon{
+
+             }
         }
     }
 }
