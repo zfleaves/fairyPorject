@@ -75,7 +75,8 @@
         </el-table>
       </div>
     </div>
-    <el-dialog :close-on-click-modal="false" class="one" center title="查看权限" height="80%" width="80%" :visible.sync="ViewPermissionsVisible">
+    <el-dialog :close-on-click-modal="false" class="one" center title="查看权限" height="80%" width="80%"
+               :visible.sync="ViewPermissionsVisible">
       <div class="tableHeader">
         <div class="functionMenu">功能菜单</div>
         <div class="operationButton">操作按钮</div>
@@ -114,7 +115,8 @@
         </ul>
       </div>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="two" center title="项目成员选择岗位" height="80%" width="80%" :visible.sync="projectMembersVisible">
+    <el-dialog :close-on-click-modal="false" class="two" center title="项目成员选择岗位" height="80%" width="80%"
+               :visible.sync="projectMembersVisible">
       <el-table
         border
         :data="projectMembersTableData"
@@ -202,25 +204,31 @@
         <el-button type="primary" @click="selectRolesSubmit">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="four" center title="选择项目成员" width="80%" v-if="selectProjectMembersVisible"
+    <el-dialog :close-on-click-modal="false" class="four" center title="选择项目成员" width="80%"
+               v-if="selectProjectMembersVisible"
                :visible.sync="selectProjectMembersVisible">
       <div class="selectProjectMembers">
         <div class="treeCon">
           <el-tree ref="tree" lazy node-key="id" v-if="orgsList" :props="defaultProps"
                    :data="orgsList" @node-click="handleNodeClick">
-                          <span class="custom-tree-node" slot-scope="{node,data}">
-                              <!-- <span>{{node}}</span> -->
-                            <!-- <span>{{data}}</span> -->
-                            <span
-                              class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{ data.orgName || data.departmentName }}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
-
-                        </span>
+              <span class="custom-tree-node" slot-scope="{node,data}">
+                  <!-- <span>{{node}}</span> -->
+                <!-- <span>{{data}}</span> -->
+                <span
+                  class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">
+                  {{ data.orgName || data.departmentName }}
+                  <span>
+                    {{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}
+                  </span>
+                </span>
+              </span>
           </el-tree>
         </div>
         <div class="membersList">
           <p class="title">企业用户列表</p>
           <div class="searchCon">
-            <el-input class="input" @change="_getRoleUsersList" size="small" v-model="params4" placeholder="请输入姓名/手机号查询"></el-input>
+            <el-input class="input" @change="_getRoleUsersList" size="small" v-model="params4"
+                      placeholder="请输入姓名/手机号查询"></el-input>
             <el-button class="btn" @click="_getRoleUsersList" size="small" type="warning">查询</el-button>
           </div>
           <el-table
@@ -305,7 +313,8 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="five" center title="项目成员选择岗位" width="80%" v-if="selectProjectMembersVisible5"
+    <el-dialog :close-on-click-modal="false" class="five" center title="项目成员选择岗位" width="80%"
+               v-if="selectProjectMembersVisible5"
                :visible.sync="selectProjectMembersVisible5">
       <el-table
         border
@@ -375,7 +384,7 @@
         <el-button type="primary" @click="selectRolesSubmit5">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false"  class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
+    <el-dialog :close-on-click-modal="false" class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
                :visible.sync="selectRolesVisible6">
       <el-table
         border
@@ -412,7 +421,7 @@
   import {
     getPermissionProjects, getProjectsUsers, getUserMenus,
     getRolesProject, updateUserProject, deleteUserProject,
-    getOrgsList, getDepartmentList, getRoleUsersList,createUserProject
+    getOrgsList, getDepartmentList, getRoleUsersList, createUserProject
   } from 'api/companyProject/projectMembers'
 
   export default {
@@ -437,8 +446,10 @@
         selectProjectMembersVisible: false,
         orgsList: [],
         defaultProps: {
+          label: function(node) {
+            return node;
+          },
           children: 'children',
-          label: 'label',
           isLeaf: 'leaf'
         },
         pageNo: 1,
@@ -456,7 +467,6 @@
         cloneMultipleSelection4: [],
         eventItem: {},
         eventTableIndex: '',
-      
 
 
       }
@@ -655,15 +665,14 @@
       handleClickAdd() {
         this.selectProjectMembersVisible = true
         getOrgsList().then(res => {
-          for (let i in res.results) {
-            let item = res.results[i]
-            if (item.children && item.children.length) {
-              item.leaf = false
-            } else {
-              item.leaf = true
-            }
-
-          }
+          // for (let i in res.results) {
+          //   let item = res.results[i]
+          //   if (item.children && item.children.length) {
+          //     item.leaf = false
+          //   } else {
+          //     item.leaf = true
+          //   }
+          // }
           this.orgsList = res.results
 
         })
@@ -740,68 +749,68 @@
       },
       //确定
       selectRolesSubmit5() {
-          if(!this.multipleSelection5.length){
-               this.$message.error('请选择要添加的项目成员');
-              return
+        if (!this.multipleSelection5.length) {
+          this.$message.error('请选择要添加的项目成员');
+          return
+        }
+
+        let userProjectReqDtos = []
+        for (let i in this.multipleSelection5) {
+          let item = this.multipleSelection5[i]
+          if (!item.rolesArr.length) {
+            this.$message.error(`${item.userName}没有设置岗位,无法保存`);
+            return
           }
-          
-          let userProjectReqDtos = []
-          for(let i in this.multipleSelection5){
-              let item = this.multipleSelection5[i]
-              if(!item.rolesArr.length){
-                this.$message.error(`${item.userName}没有设置岗位,无法保存`);
-                return
-              }
-              let obj = {
-                companyId: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).companyId : '',
-                orgId: this.orgId,
-                projectId: this.projectId,
-                remarks: item.remarks,
-                userId: item.userId,
-                roleIds:this.setRoleIdArr(item.rolesArr)
-              }
-              userProjectReqDtos.push(obj)
+          let obj = {
+            companyId: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).companyId : '',
+            orgId: this.orgId,
+            projectId: this.projectId,
+            remarks: item.remarks,
+            userId: item.userId,
+            roleIds: this.setRoleIdArr(item.rolesArr)
           }
-          let data = {
-              userProjectReqDtos
+          userProjectReqDtos.push(obj)
+        }
+        let data = {
+          userProjectReqDtos
+        }
+        createUserProject(data).then(res => {
+          if (res.status === 0) {
+            this.selectProjectMembersVisible5 = false;
+            this.selectProjectMembersVisible = false;
+            getProjectsUsers(this.projectId).then(res => {
+              this.memberInformationTableData = res.results
+            })
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            });
+          } else {
+            this.$message.error(res.errorMessage);
           }
-          createUserProject(data).then(res=>{
-              if(res.status === 0){
-                   this.selectProjectMembersVisible5 = false;
-                   this.selectProjectMembersVisible = false;
-                   getProjectsUsers(this.projectId).then(res => {
-                    this.memberInformationTableData = res.results
-                    })
-                    this.$message({
-                    message: '添加成功',
-                    type: 'success'
-                    });  
-              }else{
-                   this.$message.error(res.errorMessage);
-              }
-          
-          })
+
+        })
         // let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
         // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
-       
+
       },
       //转换为id 的数组
-      setRoleIdArr(arr){
-          let newArr = []
-           for(let i = 0; i < this.selectRolesTableData.length; i++){
-                  for(let j = 0;j<arr.length;j++){
-                       if (this.selectRolesTableData[i].rolesName === arr[j]) {
-                        newArr.push(this.selectRolesTableData[i].roleId)
-                    } else {
-                        
-                    }
-                  }
-              }
-              return newArr
+      setRoleIdArr(arr) {
+        let newArr = []
+        for (let i = 0; i < this.selectRolesTableData.length; i++) {
+          for (let j = 0; j < arr.length; j++) {
+            if (this.selectRolesTableData[i].rolesName === arr[j]) {
+              newArr.push(this.selectRolesTableData[i].roleId)
+            } else {
+
+            }
+          }
+        }
+        return newArr
       },
       //成员选择岗位删除
-      handelClickDelet5(index,item){
-          this.multipleSelection5.splice(index,1)
+      handelClickDelet5(index, item) {
+        this.multipleSelection5.splice(index, 1)
       },
       //选择岗位
       selectRoles5(index, arr) {
