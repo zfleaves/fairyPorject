@@ -255,13 +255,11 @@
                  <div class="selectMembersList">
                      <p class="title">已选用户</p>
                      <div class="selectTabelCon">
-                          <el-button class="btn" size="small" type="warning">确认选择</el-button>
+                          <el-button @click="selectSubmit" class="btn" size="small" type="warning">确认选择</el-button>
                      </div>
                      <div>
                          <el-table
                         border
-                      
-                      
                         :data="multipleSelection4"
                         style="width: 100%">
                         <el-table-column
@@ -300,6 +298,101 @@
                      </div>
                  </div>
              </div>
+        </el-dialog>
+        <el-dialog class="five" center title="项目成员选择岗位" width="80%" v-if="selectProjectMembersVisible5" :visible.sync="selectProjectMembersVisible5">
+          
+                <el-table
+                border
+                :data="multipleSelection4"
+                style="width: 100%">
+                <el-table-column
+                   type="index"
+                    label="序号"
+                    width="50">
+                </el-table-column>
+                <el-table-column
+                    prop="userName"
+                    label="姓名"
+                    show-overflow-tooltip
+                    width="80">
+                </el-table-column>
+                <el-table-column
+                    prop="userCode"
+                    width="100"
+                    show-overflow-tooltip
+                    label="电话">
+                </el-table-column>
+                <el-table-column
+    
+                    prop="rolesNames"
+                    label="选择岗位">
+                     <template slot-scope="scope">
+                         <el-tag
+                           v-if="scope.row.rolesNames.length"
+                            :key="tag"
+                            v-for="tag in scope.row.rolesNames"
+                            closable
+                            :disable-transitions="false"
+                            @close="handleCloseTag5(scope.row.rolesNames,tag)">
+                            {{tag}}
+                            </el-tag>
+                            <el-button   size="small" @click="selectRoles5(scope.row.rolesNames)" icon="el-icon-plus"></el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    width="200"
+                    prop="remarks"
+                    label="备注">
+                    <template slot-scope="scope">
+                      <el-input 
+                           style="height:40px;"
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入内容"
+                            v-model="scope.row.remarks">
+                        </el-input>
+                    </template>
+                </el-table-column>
+                 <el-table-column
+                    width="200"
+                    prop="remarks"
+                    label="备注">
+                    <template slot-scope="scope">
+                      <span style="color:red" @click="handelClickDelet5(scope.row)">删除</span>
+                    </template>
+                </el-table-column>
+                </el-table>
+                 <div slot="footer" class="dialog-footer">
+                    <el-button type="danger" plain @click="selectRolesCancel5">取 消</el-button>
+                    <el-button type="primary" @click="selectRolesSubmit5">确 定</el-button>
+                </div>
+        </el-dialog>
+           <el-dialog class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6" :visible.sync="selectRolesVisible6">
+             <el-table
+                border
+                ref="multipleTable6"
+                 @selection-change="handleSelectionChange6"
+                :data="selectRolesTableData"
+                style="width: 100%">
+                <el-table-column
+                   type="index"
+                    label="序号"
+                    width="60">
+                </el-table-column>
+                 <el-table-column
+                type="selection"
+                width="55">
+                </el-table-column>
+                <el-table-column
+                    prop="rolesName"
+                    show-overflow-tooltip
+                    label="岗位名称">
+                </el-table-column>
+                </el-table>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="danger" plain @click="selectRolesCancel6">取 消</el-button>
+                    <el-button type="primary" @click="selectRolesSubmit6">确 定</el-button>
+                </div>
         </el-dialog>
     </div>
     
@@ -343,13 +436,20 @@
                 params4:'',
                 selectUserListTableData:[],
                 userInput:'',
-                multipleSelection4:[]
+                multipleSelection4:[],
+                multipleSelection5:[],
+                selectProjectMembersVisible5:false,
+                selectRolesVisible6:false,
+                multipleSelection6:[],
+                selectRolesTableData6:[],
+                cloneMultipleSelection4:[]
+
                 
             }
         },
         created(){
             this._getPermissionProjects()
-          
+            this._getRolesProject()
         },
         methods:{
             //获取我的项目表格数据
@@ -606,6 +706,64 @@
                     this.$refs.multipleTable4.toggleRowSelection(row,false);
                     //  this.multipleSelection4 = this.multipleSelection4;
                 }
+            },
+            //点击确认选择按钮
+            selectSubmit(){
+                this.selectProjectMembersVisible5 = true;
+                this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(this.multipleSelection4))
+            },
+            //取消
+            selectRolesCancel5(){
+                this.selectProjectMembersVisible5 = false;
+                this.multipleSelection4 = this.cloneMultipleSelection4
+            },
+            //确定
+            selectRolesSubmit5(){
+                 // let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
+                // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
+                this.selectProjectMembersVisible5 = false;
+            },
+            //选择岗位
+            selectRoles5(arr){
+                
+                this.selectRolesVisible6 = true
+                  this.$nextTick(function () {
+                       for(var i = 0;i<this.selectRolesTableData.length;i++){
+                            for(let j = 0;j<arr.length;j++){
+                                if(this.selectRolesTableData[i].rolesName == arr[j] ){
+                                    this.$refs.multipleTable6.toggleRowSelection(this.selectRolesTableData[i]);
+                                    //  this.selectRolesTableData[i].checked = true
+                                }else{
+                                    //  this.selectRolesTableData[i].checked = false
+                                }   
+                            }
+                        }
+                })
+                // this.$refs.multipleTable.clearSelection();
+               
+               
+            },
+            handleCloseTag5(arr,item){
+                console.log(arr)
+               let index = arr.findIndex(v=>v === item)
+               if(index>=0){
+                   arr.splice(index,1)
+               }
+                
+            },
+            handleSelectionChange6(val){
+                console.log(val)
+                this.multipleSelection6 = val;
+            },
+            selectRolesSubmit6(){
+                console.log(this.multipleSelection)
+                let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
+                // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
+                // this.selectRolesVisible = false;
+               
+            },
+            selectRolesCancel6(){
+                this.selectRolesVisible6 = false;
             },
             setArr(arr){
                 for(let i in arr){
