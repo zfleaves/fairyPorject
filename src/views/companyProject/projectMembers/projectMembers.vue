@@ -1,82 +1,89 @@
 <template>
   <div class="projectMembers">
-    <div class="myProject">
-      <div class="myProjectTitle"><span>我的项目</span></div>
-      <div class="myProjectTable">
-        <el-table
-          border
-          @row-click="handClickMyProjectTable"
-          :data="myProjectTableData"
-          style="width: 100%">
-          <el-table-column
-            type="index"
-            label="序号"
-            width="60">
-          </el-table-column>
-          <el-table-column
-            prop="proName"
-            label="项目名称"
-            show-overflow-tooltip
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="orgName"
-            show-overflow-tooltip
-            label="所属公司">
-          </el-table-column>
-          <el-table-column
-            width="100"
-            prop="pmName"
-            label="项目经理">
-          </el-table-column>
-        </el-table>
-      </div>
-    </div>
-    <div class="memberInformation">
-      <div class="myProjectTitle"><span class="title">项目成员信息</span>
-        <el-button size="small" @click="handleClickAdd" type="primary" icon="el-icon-plus">添加</el-button>
-      </div>
-      <div class="memberInformationTable">
-        <el-table
-          border
-          :data="memberInformationTableData"
-          style="width: 100%">
-          <el-table-column
-            fixed
-            type="index"
-            label="序号"
-            width="60">
-          </el-table-column>
-          <el-table-column
-            prop="userName"
-            label="姓名"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="userCode"
-            show-overflow-tooltip
-            label="账号">
-          </el-table-column>
-          <el-table-column
-            prop="rolesNames"
-            show-overflow-tooltip
-            label="岗位">
-            <template slot-scope="scope">
-              <span>{{scope.row.rolesNames | setRolesNames}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column width="200" fixed="right" label="操作">
-            <template slot-scope="scope">
-              <span style="color:orange" @click="handleViewPermissions(scope.row)">查看权限</span>
-              <span style="color:#248bfe" @click="handleEdit(scope.row)">修改</span>
-              <span style="color:red" @click="handleDelete(scope.row)">删除</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </div>
-    <el-dialog :close-on-click-modal="false" class="one" center title="查看权限" height="80%" width="80%"
-               :visible.sync="ViewPermissionsVisible">
+    <el-row :gutter="20">
+        <el-col :span="10">
+            <div class="myProject">
+            <div class="myProjectTitle"><span>我的项目</span></div>
+            <div class="myProjectTable">
+                <el-table
+                border
+                @row-click="handClickMyProjectTable"
+                :data="myProjectTableData"
+                style="width: 100%">
+                <el-table-column
+                    type="index"
+                    label="序号"
+                    width="60">
+                </el-table-column>
+                <el-table-column
+                    prop="proName"
+                    label="项目名称"
+                    show-overflow-tooltip
+                    width="180">
+                </el-table-column>
+                <el-table-column
+                    prop="orgName"
+                    show-overflow-tooltip
+                    label="所属公司">
+                </el-table-column>
+                <el-table-column
+                    width="100"
+                    prop="pmName"
+                    label="项目经理">
+                </el-table-column>
+                </el-table>
+            </div>
+            </div>
+        </el-col>
+        <el-col :span="14">
+                <div class="memberInformation">
+                    <div class="myProjectTitle"><span class="title">项目成员信息</span>
+                        <el-button size="small" @click="handleClickAdd" type="primary" icon="el-icon-plus">添加</el-button>
+                    </div>
+                    <div class="memberInformationTable">
+                        <el-table
+                        border
+                        :data="memberInformationTableData"
+                        style="width: 100%">
+                        <el-table-column
+                            fixed
+                            type="index"
+                            label="序号"
+                            width="60">
+                        </el-table-column>
+                        <el-table-column
+                            prop="userName"
+                            label="姓名"
+                            width="100">
+                        </el-table-column>
+                        <el-table-column
+                            prop="userCode"
+                            show-overflow-tooltip
+                            label="账号">
+                        </el-table-column>
+                        <el-table-column
+                            prop="rolesNames"
+                            show-overflow-tooltip
+                            label="岗位">
+                            <template slot-scope="scope">
+                            <span>{{scope.row.rolesNames | setRolesNames}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="200" fixed="right" label="操作">
+                            <template slot-scope="scope">
+                            <span style="color:orange" @click="handleViewPermissions(scope.row)">查看权限</span>
+                            <span style="color:#248bfe" @click="handleEdit(scope.row)">修改</span>
+                            <span style="color:red" @click="handleDelete(scope.row)">删除</span>
+                            </template>
+                        </el-table-column>
+                        </el-table>
+                    </div>
+                    </div>
+        </el-col>
+    </el-row>
+
+
+    <el-dialog :close-on-click-modal="false" class="one" center title="查看权限" height="80%" width="80%" :visible.sync="ViewPermissionsVisible">
       <div class="tableHeader">
         <div class="functionMenu">功能菜单</div>
         <div class="operationButton">操作按钮</div>
@@ -209,19 +216,17 @@
                :visible.sync="selectProjectMembersVisible">
       <div class="selectProjectMembers">
         <div class="treeCon">
-          <el-tree ref="tree" lazy node-key="id" v-if="orgsList" :props="defaultProps"
-                   :data="orgsList" @node-click="handleNodeClick">
-              <span class="custom-tree-node" slot-scope="{node,data}">
-                  <!-- <span>{{node}}</span> -->
-                <!-- <span>{{data}}</span> -->
-                <span
-                  class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">
-                  {{ data.orgName || data.departmentName }}
-                  <span>
-                    {{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}
-                  </span>
-                </span>
-              </span>
+          <el-tree :load="loadNode" :default-expanded-keys="[defaultOrgId]"
+          ref="tree" :highlight-current="true" lazy node-key="id" v-if="orgsList" :props="defaultProps"
+                   :data="orgsList" current-node-key="defaultOrgId" @node-click="handleNodeClick">
+                          <span class="custom-tree-node" slot-scope="{node,data}">
+                              <!-- <span>{{node}}</span> -->
+                            <!-- <span>{{data}}</span> -->
+                            <span
+                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{data.orgName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
+
+                        </span>
+                        <!-- data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20' -->
           </el-tree>
         </div>
         <div class="membersList">
@@ -236,6 +241,7 @@
             ref="multipleTable4"
             @selection-change="handleSelectionChange4"
             :data="selectUserListTableData"
+            @row-click="rowClick4"
             style="width: 100%">
             <el-table-column
               type="selection"
@@ -467,16 +473,48 @@
         cloneMultipleSelection4: [],
         eventItem: {},
         eventTableIndex: '',
-
-
+        defaultOrgId:''
       }
     },
     created() {
-      console.log(this);
+    //   console.log(this);
       this._getPermissionProjects()
       this._getRolesProject()
+
+    },
+    mounted(){
+    //  this.$nextTick(function(){
+
+    //  })
+         this.$nextTick(()=>{
+            // this.$refs.tree.setCurrentKey(this.orgsList[0].id);
+         })
+
     },
     methods: {
+         loadNode(node, resolve) {
+             console.log(node)
+            if (node.level === 0) {
+            return resolve(this.orgsList);
+            }
+            if (node.level >= 1){
+                getDepartmentList(node.data.id).then(res=>{
+                    if(res.results && res.results.length){
+                         let departmentList = res.results
+                         for(let i in departmentList){
+                             let item = departmentList[i]
+                            //  item.leaf = false
+                         }
+                        return resolve(departmentList);
+                    }else{
+                        // node.data.leaf = true
+                        resolve([])
+                    }
+
+                })
+
+            }
+        },
       //获取我的项目表格数据
       _getPermissionProjects() {
         getPermissionProjects().then(res => {
@@ -665,45 +703,36 @@
       handleClickAdd() {
         this.selectProjectMembersVisible = true
         getOrgsList().then(res => {
-          // for (let i in res.results) {
-          //   let item = res.results[i]
-          //   if (item.children && item.children.length) {
-          //     item.leaf = false
-          //   } else {
-          //     item.leaf = true
-          //   }
-          // }
-          this.orgsList = res.results
-
+            // this.orgsList = res.results.filters(v=>v.orgAttribute === '01')
+            // this.orgsList[0].children = []
+            // this.orgsList[0].children.push(res.results.filters(v=>v.orgAttribute !== '01'))
+            for(let i in res.results){
+                let item = res.results[i]
+                if(item.orgAttribute === '01'){
+                    item.children = []
+                    this.orgsList.push(item)
+                }
+            }
+            for(let i in res.results){
+                let item = res.results[i]
+                if(item.orgAttribute !== '01'){
+                    this.orgsList[0].children.push(item)
+                }
+            }
+            console.log(this.orgsList)
+        //   this.orgsList = res.results
+          this.defaultOrgId = this.orgsList[0].id
+          this.orgId4 = this.orgsList[0].id
+          this._getRoleUsersList()
         })
       },
-      //tree点击展开
+      //tree点击渲染表格
       handleNodeClick(row) {
         // console.log(row)
         // return
         this.orgId4 = row.id
-        getDepartmentList(row.id).then(res => {
-          let departmentList = res.results
+        this._getRoleUsersList()
 
-          for (let i in departmentList) {
-            let item = departmentList[i]
-            if (item.children && item.children.length) {
-              item.leaf = false
-            } else {
-              item.leaf = true
-            }
-          }
-          if (departmentList.length) {
-            let index = this.orgsList.findIndex(v => v.id === row.id)
-            if (index >= 0) {
-              this.orgsList[index].leaf = false
-            }
-          }
-
-          this.$refs.tree.updateKeyChildren(row.id, departmentList)//更新node-key的子节点
-          // console.log(this.orgsList)
-          this._getRoleUsersList()
-        })
       },
       //
       _getRoleUsersList() {
@@ -717,10 +746,21 @@
           this.selectUserListTableData = res.results.result
         })
       },
-      //
+      //点击勾选表格
       handleSelectionChange4(val) {
         // console.log(val)
         this.multipleSelection4 = val;
+      },
+      rowClick4(row){
+          console.log(row)
+          let index = this.multipleSelection4.findIndex(v=>v.userId === row.userId)
+          if(index>=0){
+                  this.$refs.multipleTable4.toggleRowSelection(row,false);
+          }else{
+            //    this.multipleSelection4.push(row);
+                this.$refs.multipleTable4.toggleRowSelection(row);
+          }
+
       },
       //删除选中的
       handleClickDelet(row) {
@@ -910,13 +950,12 @@
 </script>
 <style scoped lang="scss">
   .projectMembers {
-    display: flex;
     padding: 10px;
     width: 100%;
     height: 100%;
     background: #fff;
     .myProject {
-      flex: 1;
+      width: 100%;
       border: 1px solid #ddd;
       margin-right: 20px;
       padding: 10px;
@@ -931,7 +970,7 @@
       }
     }
     .memberInformation {
-      flex: 1.5;
+        width: 100%;
       border: 1px solid #ddd;
       padding: 10px;
       .myProjectTitle {
@@ -1042,10 +1081,10 @@
         width: 200px;
         border: 1px #fafafa solid;
         margin-right: 10px;
-        &.pad10 {
+        .pad10 {
           padding-left: 10px;
         }
-        &.pad20 {
+        .pad20 {
           padding-left: 20px;
         }
       }
