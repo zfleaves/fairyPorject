@@ -75,7 +75,7 @@
         </el-table>
       </div>
     </div>
-    <el-dialog class="one" center title="查看权限" height="80%" width="80%" :visible.sync="ViewPermissionsVisible">
+    <el-dialog :close-on-click-modal="false" class="one" center title="查看权限" height="80%" width="80%" :visible.sync="ViewPermissionsVisible">
       <div class="tableHeader">
         <div class="functionMenu">功能菜单</div>
         <div class="operationButton">操作按钮</div>
@@ -114,7 +114,7 @@
         </ul>
       </div>
     </el-dialog>
-    <el-dialog class="two" center title="项目成员选择岗位" height="80%" width="80%" :visible.sync="projectMembersVisible">
+    <el-dialog :close-on-click-modal="false" class="two" center title="项目成员选择岗位" height="80%" width="80%" :visible.sync="projectMembersVisible">
       <el-table
         border
         :data="projectMembersTableData"
@@ -174,7 +174,7 @@
         <el-button type="primary" @click="projectMembersVisibleSubmit">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="three" center title="选择岗位" width="60%" v-if="selectRolesVisible"
+    <el-dialog :close-on-click-modal="false" class="three" center title="选择岗位" width="60%" v-if="selectRolesVisible"
                :visible.sync="selectRolesVisible">
       <el-table
         border
@@ -202,7 +202,7 @@
         <el-button type="primary" @click="selectRolesSubmit">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="four" center title="选择项目成员" width="80%" v-if="selectProjectMembersVisible"
+    <el-dialog :close-on-click-modal="false" class="four" center title="选择项目成员" width="80%" v-if="selectProjectMembersVisible"
                :visible.sync="selectProjectMembersVisible">
       <div class="selectProjectMembers">
         <div class="treeCon">
@@ -220,8 +220,8 @@
         <div class="membersList">
           <p class="title">企业用户列表</p>
           <div class="searchCon">
-            <el-input class="input" size="small" v-model="userInput" placeholder="请输入姓名/手机号查询"></el-input>
-            <el-button class="btn" size="small" type="warning">查询</el-button>
+            <el-input class="input" @change="_getRoleUsersList" size="small" v-model="params4" placeholder="请输入姓名/手机号查询"></el-input>
+            <el-button class="btn" @click="_getRoleUsersList" size="small" type="warning">查询</el-button>
           </div>
           <el-table
             border
@@ -305,10 +305,11 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog class="five" center title="项目成员选择岗位" width="80%" v-if="selectProjectMembersVisible5"
+    <el-dialog :close-on-click-modal="false" class="five" center title="项目成员选择岗位" width="80%" v-if="selectProjectMembersVisible5"
                :visible.sync="selectProjectMembersVisible5">
       <el-table
         border
+        close-on-click-modal="false"
         :data="multipleSelection5"
         style="width: 100%">
         <el-table-column
@@ -338,7 +339,7 @@
               v-for="tag in scope.row.rolesArr"
               closable
               :disable-transitions="false"
-              @close="handleCloseTag5(scope.row.rolesArr,tag)">
+              @close="handleCloseTag5(scope.row,tag)">
               {{tag}}
             </el-tag>
             <el-button size="small" @click="selectRoles5(scope.$index,scope.row.rolesArr)"
@@ -362,10 +363,10 @@
         </el-table-column>
         <el-table-column
           width="200"
-          prop="remarks"
-          label="备注">
+          prop=""
+          label="操作">
           <template slot-scope="scope">
-            <span style="color:red" @click="handelClickDelet5(scope.row)">删除</span>
+            <span style="color:red" @click="handelClickDelet5(scope.$index,scope.row)">删除</span>
           </template>
         </el-table-column>
       </el-table>
@@ -374,7 +375,7 @@
         <el-button type="primary" @click="selectRolesSubmit5">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
+    <el-dialog :close-on-click-modal="false"  class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
                :visible.sync="selectRolesVisible6">
       <el-table
         border
@@ -411,7 +412,7 @@
   import {
     getPermissionProjects, getProjectsUsers, getUserMenus,
     getRolesProject, updateUserProject, deleteUserProject,
-    getOrgsList, getDepartmentList, getRoleUsersList
+    getOrgsList, getDepartmentList, getRoleUsersList,createUserProject
   } from 'api/companyProject/projectMembers'
 
   export default {
@@ -454,7 +455,8 @@
         selectRolesTableData6: [],
         cloneMultipleSelection4: [],
         eventItem: {},
-        eventTableIndex: ''
+        eventTableIndex: '',
+      
 
 
       }
@@ -738,9 +740,68 @@
       },
       //确定
       selectRolesSubmit5() {
+          if(!this.multipleSelection5.length){
+               this.$message.error('请选择要添加的项目成员');
+              return
+          }
+          
+          let userProjectReqDtos = []
+          for(let i in this.multipleSelection5){
+              let item = this.multipleSelection5[i]
+              if(!item.rolesArr.length){
+                this.$message.error(`${item.userName}没有设置岗位,无法保存`);
+                return
+              }
+              let obj = {
+                companyId: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).companyId : '',
+                orgId: this.orgId,
+                projectId: this.projectId,
+                remarks: item.remarks,
+                userId: item.userId,
+                roleIds:this.setRoleIdArr(item.rolesArr)
+              }
+              userProjectReqDtos.push(obj)
+          }
+          let data = {
+              userProjectReqDtos
+          }
+          createUserProject(data).then(res=>{
+              if(res.status === 0){
+                   this.selectProjectMembersVisible5 = false;
+                   this.selectProjectMembersVisible = false;
+                   getProjectsUsers(this.projectId).then(res => {
+                    this.memberInformationTableData = res.results
+                    })
+                    this.$message({
+                    message: '添加成功',
+                    type: 'success'
+                    });  
+              }else{
+                   this.$message.error(res.errorMessage);
+              }
+          
+          })
         // let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
         // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
-        this.selectProjectMembersVisible5 = false;
+       
+      },
+      //转换为id 的数组
+      setRoleIdArr(arr){
+          let newArr = []
+           for(let i = 0; i < this.selectRolesTableData.length; i++){
+                  for(let j = 0;j<arr.length;j++){
+                       if (this.selectRolesTableData[i].rolesName === arr[j]) {
+                        newArr.push(this.selectRolesTableData[i].roleId)
+                    } else {
+                        
+                    }
+                  }
+              }
+              return newArr
+      },
+      //成员选择岗位删除
+      handelClickDelet5(index,item){
+          this.multipleSelection5.splice(index,1)
       },
       //选择岗位
       selectRoles5(index, arr) {
@@ -764,12 +825,16 @@
 
 
       },
-      handleCloseTag5(arr, item) {
+      handleCloseTag5(row, item) {
         // console.log(arr)
-        let index = arr.findIndex(v => v === item)
+        let index = row.rolesArr.findIndex(v => v === item)
         if (index >= 0) {
-          arr.splice(index, 1)
+          row.rolesArr.splice(index, 1)
         }
+        let userName = row.userName
+        row.userName = "123"
+        row.userName = userName
+        console.log(arr)
 
       },
       handleSelectionChange6(val) {

@@ -85,4 +85,15 @@ export function getRoleUsersList(data){
 
     })
 }
-// ?pageNo=1&pageSize=7&orgId=378&params=
+
+// 添加项目成员
+export function createUserProject(data){
+    return request({
+        url:'/bizbase/project/user/create',
+        method:'post',
+       data
+
+    })
+}
+
+
