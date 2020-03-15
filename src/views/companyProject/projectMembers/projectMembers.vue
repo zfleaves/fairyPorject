@@ -221,7 +221,7 @@
                               <!-- <span>{{node}}</span> -->
                             <!-- <span>{{data}}</span> -->
                             <span
-                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'"><span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
+                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{data.orgName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
 
                         </span>
                         <!-- data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20' -->
@@ -699,16 +699,24 @@
       handleClickAdd() {
         this.selectProjectMembersVisible = true
         getOrgsList().then(res => {
-        //   for (let i in res.results) {
-        //     let item = res.results[i]
-        //     if (item.children && item.children.length) {
-        //       item.leaf = false
-        //     } else {
-        //       item.leaf = true
-        //     }
-
-        //   }
-          this.orgsList = res.results
+            // this.orgsList = res.results.filters(v=>v.orgAttribute === '01')
+            // this.orgsList[0].children = []
+            // this.orgsList[0].children.push(res.results.filters(v=>v.orgAttribute !== '01'))
+            for(let i in res.results){
+                let item = res.results[i]
+                if(item.orgAttribute === '01'){
+                    item.children = []
+                    this.orgsList.push(item)
+                }
+            }
+            for(let i in res.results){
+                let item = res.results[i]
+                if(item.orgAttribute !== '01'){
+                    this.orgsList[0].children.push(item)
+                }
+            }
+            console.log(this.orgsList)
+        //   this.orgsList = res.results
           this.defaultOrgId = this.orgsList[0].id
           this.orgId4 = this.orgsList[0].id
           this._getRoleUsersList()
