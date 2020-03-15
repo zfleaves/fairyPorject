@@ -303,7 +303,7 @@
           
                 <el-table
                 border
-                :data="multipleSelection4"
+                :data="multipleSelection5"
                 style="width: 100%">
                 <el-table-column
                    type="index"
@@ -324,19 +324,19 @@
                 </el-table-column>
                 <el-table-column
     
-                    prop="rolesNames"
+                    prop="roles"
                     label="选择岗位">
                      <template slot-scope="scope">
                          <el-tag
-                           v-if="scope.row.rolesNames.length"
+                           v-if="scope.row.rolesArr.length"
                             :key="tag"
-                            v-for="tag in scope.row.rolesNames"
+                            v-for="tag in scope.row.rolesArr"
                             closable
                             :disable-transitions="false"
-                            @close="handleCloseTag5(scope.row.rolesNames,tag)">
+                            @close="handleCloseTag5(scope.row.rolesArr,tag)">
                             {{tag}}
                             </el-tag>
-                            <el-button   size="small" @click="selectRoles5(scope.row.rolesNames)" icon="el-icon-plus"></el-button>
+                            <el-button   size="small" @click="selectRoles5(scope.$index,scope.row.rolesArr)" icon="el-icon-plus"></el-button>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -442,7 +442,9 @@
                 selectRolesVisible6:false,
                 multipleSelection6:[],
                 selectRolesTableData6:[],
-                cloneMultipleSelection4:[]
+                cloneMultipleSelection4:[],
+                eventItem:{},
+                eventTableIndex:''
 
                 
             }
@@ -474,7 +476,7 @@
             },
             // 点击我的项目表格行
             handClickMyProjectTable(row){
-                console.log(row)
+                // console.log(row)
                 this._getProjectsUsers(row.id)
                 this.projectId = row.id
                 this.orgId = row.orgId
@@ -578,7 +580,7 @@
                
             },
             handleCloseTag(arr,item){
-                console.log(arr)
+                // console.log(arr)
                let index = arr.findIndex(v=>v === item)
                if(index>=0){
                    arr.splice(index,1)
@@ -587,7 +589,7 @@
             },
             //选择岗位确定
             selectRolesSubmit(){
-                console.log(this.multipleSelection)
+                // console.log(this.multipleSelection)
                 let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
                 this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
                 this.selectRolesVisible = false;
@@ -633,7 +635,7 @@
                 this.projectMembersVisible = false;
             },
             handleSelectionChange(val){
-                console.log(val)
+                // console.log(val)
                 this.multipleSelection = val;
             },
             //添加项目成员
@@ -655,7 +657,7 @@
             },
             //tree点击展开
             handleNodeClick(row){
-                console.log(row)
+                // console.log(row)
                 // return
                 this.orgId4 = row.id
                 getDepartmentList(row.id).then(res=>{
@@ -677,7 +679,7 @@
                     }
 
                     this.$refs.tree.updateKeyChildren(row.id,departmentList)//更新node-key的子节点
-                    console.log(this.orgsList)
+                    // console.log(this.orgsList)
                     this._getRoleUsersList()
                 })
             },
@@ -695,7 +697,7 @@
             },
             //
             handleSelectionChange4(val){
-                console.log(val)
+                // console.log(val)
                 this.multipleSelection4 = val;
             },
             //删除选中的
@@ -710,7 +712,13 @@
             //点击确认选择按钮
             selectSubmit(){
                 this.selectProjectMembersVisible5 = true;
-                this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(this.multipleSelection4))
+                this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(this.multipleSelection4))//保存一份
+                this.multipleSelection5 = JSON.parse(JSON.stringify(this.multipleSelection4))//保存一份
+                for(let i in this.multipleSelection5){
+                    let item = this.multipleSelection5[i]
+                    item.rolesArr = []
+                }
+               
             },
             //取消
             selectRolesCancel5(){
@@ -724,8 +732,10 @@
                 this.selectProjectMembersVisible5 = false;
             },
             //选择岗位
-            selectRoles5(arr){
-                
+            selectRoles5(index,arr){
+                console.log(index)
+                console.log(arr)
+                this.eventTableIndex = index
                 this.selectRolesVisible6 = true
                   this.$nextTick(function () {
                        for(var i = 0;i<this.selectRolesTableData.length;i++){
@@ -744,7 +754,7 @@
                
             },
             handleCloseTag5(arr,item){
-                console.log(arr)
+                // console.log(arr)
                let index = arr.findIndex(v=>v === item)
                if(index>=0){
                    arr.splice(index,1)
@@ -756,8 +766,15 @@
                 this.multipleSelection6 = val;
             },
             selectRolesSubmit6(){
-                console.log(this.multipleSelection)
-                let Arr =  JSON.parse(JSON.stringify(this.multipleSelection))
+                console.log(this.multipleSelection6)
+                let Arr =  JSON.parse(JSON.stringify(this.multipleSelection6))
+                
+                // this.multipleSelection5[this.eventTableIndex].rolesArr = Arr.map(v=>v.rolesName)
+                this.$set(this.multipleSelection5[this.eventTableIndex],'rolesArr',Arr.map(v=>v.rolesName))
+                // this.eventItem.rolesArr = Arr.map(v=>v.rolesName)
+                  this.selectRolesVisible6 = false;
+                  console.log(this.multipleSelection5)
+                //    console.log(this.eventItem)
                 // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
                 // this.selectRolesVisible = false;
                
@@ -792,7 +809,7 @@
                 }
             },
             setRolesList(val){
-                console.log(val)
+                // console.log(val)
                 if(val && val.length){
                       return val.map(v=>v.rolesName).join('、')
                 }else{
