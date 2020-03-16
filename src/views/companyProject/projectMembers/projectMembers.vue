@@ -223,7 +223,7 @@
                               <!-- <span>{{node}}</span> -->
                             <!-- <span>{{data}}</span> -->
                             <span
-                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{data.orgName || data.departmentName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
+                            >{{data.orgName || data.departmentName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
 
                         </span>
                         <!-- data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20' -->
@@ -486,9 +486,10 @@
     //  this.$nextTick(function(){
 
     //  })
-         this.$nextTick(()=>{
-            // this.$refs.tree.setCurrentKey(this.orgsList[0].id);
-         })
+    // if(this.orgsList[0].id){
+      
+    // }
+        
 
     },
     methods: {
@@ -498,20 +499,48 @@
             return resolve(this.orgsList);
             }
             if (node.level >= 1){
-                getDepartmentList(node.data.id).then(res=>{
-                    if(res.results && res.results.length){
-                         let departmentList = res.results
-                         for(let i in departmentList){
-                             let item = departmentList[i]
-                            //  item.leaf = false
-                         }
-                        return resolve(departmentList);
-                    }else{
-                        // node.data.leaf = true
-                        resolve([])
-                    }
+              console.log(node.data)
+              // return
+                if(node.data.children && node.data.children.length){
+                    getDepartmentList(node.data.id).then(res=>{
+                      if(res.results && res.results.length){
+                          let departmentList = res.results
+                          for(let i in departmentList){
+                            let item = departmentList[i]
+                            if(node.data.orgAttribute !== '01' && node.data.orgAttribute !== '02'){
+                                item.leaf = false
+                            }else{
+                              item.leaf = true
+                            }
+                           
+                          }
+                          return resolve(node.data.children.concat(departmentList));
+                      }else{
+                          resolve(node.data.children)
+                      }
 
-                })
+                  })
+                }else{
+                    getDepartmentList(node.data.id).then(res=>{
+                      if(res.results && res.results.length){
+                          let departmentList = res.results
+                           for(let i in departmentList){
+                            let item = departmentList[i]
+                             if(node.data.orgAttribute !== '01' && node.data.orgAttribute !== '02'){
+                                item.leaf = false
+                            }else{
+                              item.leaf = true
+                            }
+                           
+                          }
+                          return resolve(departmentList);
+                      }else{
+                          resolve([])
+                      }
+
+                  })
+                }
+               
 
             }
         },
@@ -724,6 +753,9 @@
         //   this.orgsList = res.results
           this.defaultOrgId = this.orgsList[0].id
           this.orgId4 = this.orgsList[0].id
+           this.$nextTick(()=>{
+            this.$refs.tree.setCurrentKey(this.orgsList[0].id);
+         })
           this._getRoleUsersList()
         })
       },
