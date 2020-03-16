@@ -223,7 +223,7 @@
                               <!-- <span>{{node}}</span> -->
                             <!-- <span>{{data}}</span> -->
                             <span
-                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{data.orgName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
+                              :class="data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20'">{{data.orgName || data.departmentName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
 
                         </span>
                         <!-- data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20' -->
@@ -702,6 +702,7 @@
       //添加项目成员
       handleClickAdd() {
         this.selectProjectMembersVisible = true
+        this.orgsList = []
         getOrgsList().then(res => {
             // this.orgsList = res.results.filters(v=>v.orgAttribute === '01')
             // this.orgsList[0].children = []
