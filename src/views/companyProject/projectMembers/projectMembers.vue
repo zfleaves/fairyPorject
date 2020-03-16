@@ -3,120 +3,125 @@
     <div style="background:#fff;height:100%;">
       <el-row :gutter="20">
         <el-col :span="10">
-            <div class="myProject">
+          <div class="myProject">
             <div class="myProjectTitle"><span>我的项目</span></div>
             <div class="myProjectTable">
-                <el-table
+              <el-table
                 border
                 @row-click="handClickMyProjectTable"
                 :data="myProjectTableData"
                 style="width: 100%">
                 <el-table-column
-                    type="index"
-                    label="序号"
-                    width="60">
+                  type="index"
+                  label="序号"
+                  width="60">
                 </el-table-column>
                 <el-table-column
-                    prop="proName"
-                    label="项目名称"
-                    show-overflow-tooltip
-                    width="180">
+                  prop="proName"
+                  label="项目名称"
+                  show-overflow-tooltip
+                  width="180">
                 </el-table-column>
                 <el-table-column
-                    prop="orgName"
-                    show-overflow-tooltip
-                    label="所属公司">
+                  prop="orgName"
+                  show-overflow-tooltip
+                  label="所属公司">
                 </el-table-column>
                 <el-table-column
-                    width="100"
-                    prop="pmName"
-                    label="项目经理">
+                  width="100"
+                  prop="pmName"
+                  label="项目经理">
                 </el-table-column>
-                </el-table>
+              </el-table>
             </div>
-            </div>
+          </div>
         </el-col>
         <el-col :span="14">
-                <div class="memberInformation">
-                    <div class="myProjectTitle"><span class="title">项目成员信息</span>
-                        <el-button size="small" @click="handleClickAdd" type="primary" icon="el-icon-plus">添加</el-button>
-                    </div>
-                    <div class="memberInformationTable">
-                        <el-table
-                        border
-                        :data="memberInformationTableData"
-                        style="width: 100%">
-                        <el-table-column
-                            fixed
-                            type="index"
-                            label="序号"
-                            width="60">
-                        </el-table-column>
-                        <el-table-column
-                            prop="userName"
-                            label="姓名"
-                            width="100">
-                        </el-table-column>
-                        <el-table-column
-                            prop="userCode"
-                            show-overflow-tooltip
-                            label="账号">
-                        </el-table-column>
-                        <el-table-column
-                            prop="rolesNames"
-                            show-overflow-tooltip
-                            label="岗位">
-                            <template slot-scope="scope">
-                            <span>{{scope.row.rolesNames | setRolesNames}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column width="200" fixed="right" label="操作">
-                            <template slot-scope="scope">
-                            <span style="color:orange" @click="handleViewPermissions(scope.row)">查看权限</span>
-                            <span style="color:#248bfe" @click="handleEdit(scope.row)">修改</span>
-                            <span style="color:red" @click="handleDelete(scope.row)">删除</span>
-                            </template>
-                        </el-table-column>
-                        </el-table>
-                    </div>
-                    </div>
+          <div class="memberInformation">
+            <div class="myProjectTitle"><span class="title">项目成员信息</span>
+              <el-button size="small" @click="handleClickAdd" type="primary" icon="el-icon-plus">添加</el-button>
+            </div>
+            <div class="memberInformationTable">
+              <el-table
+                border
+                :data="memberInformationTableData"
+                style="width: 100%">
+                <el-table-column
+                  fixed
+                  type="index"
+                  label="序号"
+                  width="60">
+                </el-table-column>
+                <el-table-column
+                  prop="userName"
+                  label="姓名"
+                  width="100">
+                </el-table-column>
+                <el-table-column
+                  prop="userCode"
+                  show-overflow-tooltip
+                  label="账号">
+                </el-table-column>
+                <el-table-column
+                  prop="rolesNames"
+                  show-overflow-tooltip
+                  label="岗位">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.rolesNames | setRolesNames}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column width="200" fixed="right" label="操作">
+                  <template slot-scope="scope">
+                    <span style="color:orange" @click="handleViewPermissions(scope.row)">查看权限</span>
+                    <span style="color:#248bfe" @click="handleEdit(scope.row)">修改</span>
+                    <span style="color:red" @click="handleDelete(scope.row)">删除</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
         </el-col>
-    </el-row>
+      </el-row>
 
     </div>
 
-    <el-dialog  :close-on-click-modal="false" class="ViewPermissions" center title="查看权限" height="80%" width="80%" :visible.sync="ViewPermissionsVisible">
-        <viewPermissions-component :UserMenus="UserMenus" :loading="loading"></viewPermissions-component>
+    <el-dialog :close-on-click-modal="false" class="ViewPermissions" center title="查看权限" height="80%" width="80%"
+               :visible.sync="ViewPermissionsVisible">
+      <viewPermissions-component :UserMenus="UserMenus" :loading="loading">
+      </viewPermissions-component>
     </el-dialog>
     <el-dialog :close-on-click-modal="false" class="projectMembers" center title="项目成员选择岗位" height="80%" width="80%"
                :visible.sync="projectMembersVisible">
-        <project-members-component :projectMembersTableData="projectMembersTableData" 
+      <project-members-component
+        :projectMembersTableData="projectMembersTableData"
         :selectRolesTableData="selectRolesTableData"
         @selectRoles="selectRoles"
         @projectMembersVisibleCancel="projectMembersVisibleCancel"
-        @projectMembersVisibleSubmit="projectMembersVisibleSubmit"
-        ></project-members-component>
+        @projectMembersVisibleSubmit="projectMembersVisibleSubmit">
+      </project-members-component>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="selectRoles" center title="选择岗位" width="60%" v-if="selectRolesVisible"
+    <el-dialog :close-on-click-modal="false" class="selectRoles" center title="选择岗位" width="60%"
+               v-if="selectRolesVisible"
                :visible.sync="selectRolesVisible">
-        <select-roles-component ref="multipleTable" :selectRolesTableData="selectRolesTableData" 
+      <select-roles-component
+        ref="multipleTable" :selectRolesTableData="selectRolesTableData"
         :selectRolesArr="selectRolesArr"
         @sendMultipleSelection="sendMultipleSelection"
         @selectRolesCancel="isSelectRolesCancel"
-        @selectRolesSubmit="selectRolesSubmit"
-        ></select-roles-component>
+        @selectRolesSubmit="selectRolesSubmit">
+      </select-roles-component>
     </el-dialog>
     <el-dialog :close-on-click-modal="false" class="four" center title="选择项目成员" width="80%"
                v-if="selectProjectMembersVisible"
                :visible.sync="selectProjectMembersVisible">
-        <select-project-members-component 
+      <select-project-members-component
         :orgsList="orgsList" :defaultOrgId="defaultOrgId"
         @multipleSelection4="multipleSelection4"
         @ToHandleNodeClick="ToHandleNodeClick"
         @sendHandleSelectionChange4="sendHandleSelectionChange4"
         :selectUserListTableData="selectUserListTableData"
-        @sendSelectSubmit="sendSelectSubmit"
-        ></select-project-members-component>
+        @sendSelectSubmit="sendSelectSubmit">
+      </select-project-members-component>
     </el-dialog>
     <el-dialog :close-on-click-modal="false" class="five" center title="项目成员选择岗位" width="80%"
                v-if="selectProjectMembersVisible5"
@@ -232,12 +237,12 @@
   import projectMembersComponent from '../component/projectMembersComponent'
   import selectRolesComponent from '../component/selectRolesComponent'
   import selectProjectMembersComponent from '../component/selectProjectMembersComponent'
-  
-  
+
+
   export default {
     name: 'projectMembers',
-    components:{
-      ViewPermissionsComponent,projectMembersComponent,selectRolesComponent,selectProjectMembersComponent
+    components: {
+      ViewPermissionsComponent, projectMembersComponent, selectRolesComponent, selectProjectMembersComponent
     },
     data() {
       return {
@@ -258,7 +263,7 @@
         orgId: '',
         selectProjectMembersVisible: false,
         orgsList: [],
-        
+
         pageNo: 1,
         pageSize: 7,
         orgId4: '',
@@ -273,29 +278,29 @@
         cloneMultipleSelection4: [],
         eventItem: {},
         eventTableIndex: '',
-        defaultOrgId:0,
-        selectRolesArr:[],
-        params4:''
+        defaultOrgId: 0,
+        selectRolesArr: [],
+        params4: ''
       }
     },
     created() {
-    //   console.log(this);
+      //   console.log(this);
       this._getPermissionProjects()
       this._getRolesProject()
 
     },
-    mounted(){
-    //  this.$nextTick(function(){
+    mounted() {
+      //  this.$nextTick(function(){
 
-    //  })
-    // if(this.orgsList[0].id){
-      
-    // }
-        
+      //  })
+      // if(this.orgsList[0].id){
+
+      // }
+
 
     },
     methods: {
-        
+
       //获取我的项目表格数据
       _getPermissionProjects() {
         getPermissionProjects().then(res => {
@@ -346,14 +351,14 @@
         this._getRolesProject()
       },
       //获得multipleSelection
-      sendMultipleSelection(val){
-         this.multipleSelection = val;
+      sendMultipleSelection(val) {
+        this.multipleSelection = val;
       },
       //
-      selectRoles(arr){
-            this.selectRolesVisible = true
-            this.selectRolesArr = arr
-            
+      selectRoles(arr) {
+        this.selectRolesVisible = true
+        this.selectRolesArr = arr
+
       },
       //删除
       handleDelete(row) {
@@ -411,8 +416,8 @@
 
         })
       },
-     
-      
+
+
       //选择岗位确定
       selectRolesSubmit() {
         // console.log(this.multipleSelection)
@@ -469,35 +474,35 @@
         this.selectProjectMembersVisible = true
         this.orgsList = []
         getOrgsList().then(res => {
-            // this.orgsList = res.results.filters(v=>v.orgAttribute === '01')
-            // this.orgsList[0].children = []
-            // this.orgsList[0].children.push(res.results.filters(v=>v.orgAttribute !== '01'))
-            for(let i in res.results){
-                let item = res.results[i]
-                if(item.orgAttribute === '01'){
-                    item.children = []
-                    this.orgsList.push(item)
-                }
+          // this.orgsList = res.results.filters(v=>v.orgAttribute === '01')
+          // this.orgsList[0].children = []
+          // this.orgsList[0].children.push(res.results.filters(v=>v.orgAttribute !== '01'))
+          for (let i in res.results) {
+            let item = res.results[i]
+            if (item.orgAttribute === '01') {
+              item.children = []
+              this.orgsList.push(item)
             }
-            for(let i in res.results){
-                let item = res.results[i]
-                if(item.orgAttribute !== '01'){
-                    this.orgsList[0].children.push(item)
-                }
+          }
+          for (let i in res.results) {
+            let item = res.results[i]
+            if (item.orgAttribute !== '01') {
+              this.orgsList[0].children.push(item)
             }
-            console.log(this.orgsList)
-        //   this.orgsList = res.results
+          }
+          console.log(this.orgsList)
+          //   this.orgsList = res.results
           this.defaultOrgId = Number(this.orgsList[0].id)
           this.orgId4 = this.orgsList[0].id
-         
+
           this._getRoleUsersList('')
         })
       },
       //获得
-     ToHandleNodeClick(row){
+      ToHandleNodeClick(row) {
         this.orgId4 = row.id
         this._getRoleUsersList('')
-     },
+      },
       //
       _getRoleUsersList(params4) {
         this.params4 = params4
@@ -511,9 +516,9 @@
           this.selectUserListTableData = res.results.result
         })
       },
-     sendHandleSelectionChange4(val){
-         this.multipleSelection4 = val;
-     },
+      sendHandleSelectionChange4(val) {
+        this.multipleSelection4 = val;
+      },
       // sendRowClick4(row){
       //     console.log(row)
       //     let index = this.multipleSelection4.findIndex(v=>v.userId === row.userId)
@@ -525,7 +530,7 @@
       //     }
 
       // },
-      
+
       //点击确认选择按钮
       sendSelectSubmit() {
         this.selectProjectMembersVisible5 = true;
@@ -677,7 +682,6 @@
         return arr
       },
 
-     
 
     },
     filters: {
@@ -723,7 +727,7 @@
       }
     }
     .memberInformation {
-        width: 100%;
+      width: 100%;
       border: 1px solid #ddd;
       padding: 10px;
       .myProjectTitle {
@@ -743,7 +747,6 @@
 
       }
     }
-   
-    
+
   }
 </style>
