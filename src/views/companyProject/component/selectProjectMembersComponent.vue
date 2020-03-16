@@ -126,10 +126,6 @@
         type: Array,
         default: () => []
       },
-      multipleSelection4: {
-        type: Array,
-        default: () => []
-      },
     },
     data() {
       return {
@@ -140,7 +136,8 @@
           children: 'children',
           isLeaf: 'leaf'
         },
-        params4: ''
+        params4: '',
+        multipleSelection4:[]
 
       }
     },
@@ -211,8 +208,7 @@
       //点击勾选表格
       handleSelectionChange4(val) {
         // console.log(val)
-        this.$emit('sendHandleSelectionChange4', val)
-
+        this.multipleSelection4 = val;
       },
       rowClick4(row) {
         //   console.log(row)
@@ -226,7 +222,7 @@
 
       },
       selectSubmit() {
-        this.$emit('sendSelectSubmit')
+        this.$emit('sendSelectSubmit',this.multipleSelection4)
       },
       //删除选中的
       handleClickDelet(row) {

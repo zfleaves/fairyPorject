@@ -116,9 +116,7 @@
                :visible.sync="selectProjectMembersVisible">
       <select-project-members-component
         :orgsList="orgsList" :defaultOrgId="defaultOrgId"
-        @multipleSelection4="multipleSelection4"
         @ToHandleNodeClick="ToHandleNodeClick"
-        @sendHandleSelectionChange4="sendHandleSelectionChange4"
         :selectUserListTableData="selectUserListTableData"
         @sendSelectSubmit="sendSelectSubmit">
       </select-project-members-component>
@@ -269,7 +267,7 @@
         orgId4: '',
         selectUserListTableData: [],
         userInput: '',
-        multipleSelection4: [],
+        // multipleSelection4: [],
         multipleSelection5: [],
         selectProjectMembersVisible5: false,
         selectRolesVisible6: false,
@@ -516,9 +514,9 @@
           this.selectUserListTableData = res.results.result
         })
       },
-      sendHandleSelectionChange4(val) {
-        this.multipleSelection4 = val;
-      },
+      // sendHandleSelectionChange4(val) {
+       
+      // },
       // sendRowClick4(row){
       //     console.log(row)
       //     let index = this.multipleSelection4.findIndex(v=>v.userId === row.userId)
@@ -532,10 +530,10 @@
       // },
 
       //点击确认选择按钮
-      sendSelectSubmit() {
+      sendSelectSubmit(arr) {
         this.selectProjectMembersVisible5 = true;
-        this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(this.multipleSelection4))//保存一份
-        this.multipleSelection5 = JSON.parse(JSON.stringify(this.multipleSelection4))//保存一份
+        this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(arr))//保存一份
+        this.multipleSelection5 = JSON.parse(JSON.stringify(arr))//保存一份
         for (let i in this.multipleSelection5) {
           let item = this.multipleSelection5[i]
           item.rolesArr = []
