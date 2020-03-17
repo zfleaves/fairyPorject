@@ -816,5 +816,9 @@
   // .el-tree-node__expand-icon{
   //   color: #333;
   // }
- 
+    .custom-tree-node{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 }

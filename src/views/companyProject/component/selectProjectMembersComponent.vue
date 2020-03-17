@@ -8,8 +8,11 @@
             <span class="custom-tree-node" slot-scope="{node,data}">
                 <!-- <span>{{node}}</span> -->
               <!-- <span>{{data}}</span> -->
-              <span
+               <el-tooltip class="item" effect="dark" :content="setContent(data)" placement="top-start">
+                  <span
               >{{data.orgName || data.departmentName}}<span>{{data.orgAttribute === '01' ? '(总公司)' : data.orgAttribute === '02' ? '(分公司)' : '(部门)'}}</span></span>
+              </el-tooltip>
+             
 
            </span>
           <!-- data.orgAttribute === '01' ? '' : data.orgAttribute === '02' ? 'pad10' : 'pad20' -->
@@ -127,6 +130,13 @@
         default: () => []
       },
     },
+    watch:{
+      orgsList(){
+         this.$nextTick(() => {
+          this.$refs.tree.setCurrentKey(this.defaultOrgId);
+        })
+      }
+    },
     data() {
       return {
         defaultProps: {
@@ -142,11 +152,26 @@
       }
     },
     mounted() {
-      this.$nextTick(() => {
-        this.$refs.tree.setCurrentKey(this.defaultOrgId);
-      })
+     
     },
     methods: {
+      setContent(data){
+        if(data.orgName || data.departmentName){
+          let name = data.orgName || data.departmentName
+          let unit = ''
+          if(data.orgAttribute === '01'){
+            unit = "(总公司)"
+          }else if(data.orgAttribute === '02'){
+            unit = "(分公司)"
+          }else{
+            unit = "(部门)"
+          }
+           return `${name}${unit}`
+        }else{
+          return ''
+        }
+       
+      },
       loadNode(node, resolve) {
         console.log(node)
         if (node.level === 0) {
