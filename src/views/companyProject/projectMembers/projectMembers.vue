@@ -111,7 +111,7 @@
         @selectRolesSubmit="selectRolesSubmit">
       </select-roles-component>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="four" center title="选择项目成员" width="80%"
+    <el-dialog :close-on-click-modal="false" class="projectMemberAgain" center title="选择项目成员" width="80%"
                v-if="selectProjectMembersVisible"
                :visible.sync="selectProjectMembersVisible">
       <select-project-members-component
@@ -121,104 +121,25 @@
         @sendSelectSubmit="sendSelectSubmit">
       </select-project-members-component>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="five" center title="项目成员选择岗位" width="80%"
+    <el-dialog :close-on-click-modal="false" class="projectMembersAgain" center title="项目成员选择岗位" width="80%"
                v-if="selectProjectMembersVisible5"
                :visible.sync="selectProjectMembersVisible5">
-      <el-table
-        border
-        close-on-click-modal="false"
-        :data="multipleSelection5"
-        style="width: 100%">
-        <el-table-column
-          type="index"
-          label="序号"
-          width="50">
-        </el-table-column>
-        <el-table-column
-          prop="userName"
-          label="姓名"
-          show-overflow-tooltip
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="userCode"
-          width="100"
-          show-overflow-tooltip
-          label="电话">
-        </el-table-column>
-        <el-table-column
-
-          prop="roles"
-          label="选择岗位">
-          <template slot-scope="scope">
-            <el-tag
-              :key="tag"
-              v-for="tag in scope.row.rolesArr"
-              closable
-              :disable-transitions="false"
-              @close="handleCloseTag5(scope.row,tag)">
-              {{tag}}
-            </el-tag>
-            <el-button size="small" @click="selectRoles5(scope.$index,scope.row.rolesArr)"
-                       icon="el-icon-plus">
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="200"
-          prop="remarks"
-          label="备注">
-          <template slot-scope="scope">
-            <el-input
-              style="height:40px;"
-              type="textarea"
-              :rows="2"
-              placeholder="请输入内容"
-              v-model="scope.row.remarks">
-            </el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="200"
-          prop=""
-          label="操作">
-          <template slot-scope="scope">
-            <span style="color:red" @click="handelClickDelet5(scope.$index,scope.row)">删除</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="danger" plain @click="selectRolesCancel5">取 消</el-button>
-        <el-button type="primary" @click="selectRolesSubmit5">确 定</el-button>
-      </div>
+              <project-members2 @sendSelectRoles5="sendSelectRoles5" 
+              :selectRolesTableData="selectRolesTableData"
+              @selectRolesCancel5="selectRolesCancel5"
+              @handelClickDelet5="handelClickDelet5"
+              :multipleSelection5="multipleSelection5"
+              @selectRolesSubmit5="selectRolesSubmit5"
+              ></project-members2>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="six" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
+    <el-dialog :close-on-click-modal="false" class="selectRolesAgain" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
                :visible.sync="selectRolesVisible6">
-      <el-table
-        border
-        ref="multipleTable6"
-        @selection-change="handleSelectionChange6"
-        :data="selectRolesTableData"
-        style="width: 100%">
-        <el-table-column
-          type="index"
-          label="序号"
-          width="60">
-        </el-table-column>
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          prop="rolesName"
-          show-overflow-tooltip
-          label="岗位名称">
-        </el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="danger" plain @click="selectRolesCancel6">取 消</el-button>
-        <el-button type="primary" @click="selectRolesSubmit6">确 定</el-button>
-      </div>
+              <select-roles-component2 :selectRolesTableData="selectRolesTableData"
+              @selectRolesCancel6="selectRolesCancel6"
+              @selectRolesSubmit6="selectRolesSubmit6"
+              :selectArr="selectArr"
+              @handleSelectionChange6="handleSelectionChange6"
+              ></select-roles-component2>
     </el-dialog>
   </div>
 
@@ -235,12 +156,16 @@
   import projectMembersComponent from '../component/projectMembersComponent'
   import selectRolesComponent from '../component/selectRolesComponent'
   import selectProjectMembersComponent from '../component/selectProjectMembersComponent'
-
+  import projectMembers2 from '../component/projectMembers2'
+  import selectRolesComponent2 from '../component/selectRolesComponent2'
+  
 
   export default {
     name: 'projectMembers',
     components: {
-      ViewPermissionsComponent, projectMembersComponent, selectRolesComponent, selectProjectMembersComponent
+      ViewPermissionsComponent, projectMembersComponent, 
+      selectRolesComponent, selectProjectMembersComponent,projectMembers2,
+      selectRolesComponent2
     },
     data() {
       return {
@@ -278,7 +203,8 @@
         eventTableIndex: '',
         defaultOrgId: 0,
         selectRolesArr: [],
-        params4: ''
+        params4: '',
+        selectArr:[]
       }
     },
     created() {
@@ -531,6 +457,7 @@
 
       //点击确认选择按钮
       sendSelectSubmit(arr) {
+        console.log(arr)
         this.selectProjectMembersVisible5 = true;
         this.cloneMultipleSelection4 = JSON.parse(JSON.stringify(arr))//保存一份
         this.multipleSelection5 = JSON.parse(JSON.stringify(arr))//保存一份
@@ -539,6 +466,9 @@
           item.rolesArr = []
         }
 
+      },
+      handelClickDelet5(index){
+          this.multipleSelection5.splice(index, 1)
       },
       //取消
       selectRolesCancel5() {
@@ -606,43 +536,12 @@
         }
         return newArr
       },
-      //成员选择岗位删除
-      handelClickDelet5(index, item) {
-        this.multipleSelection5.splice(index, 1)
-      },
-      //选择岗位
-      selectRoles5(index, arr) {
-        console.log(index)
-        console.log(arr)
-        this.eventTableIndex = index
-        this.selectRolesVisible6 = true
-        this.$nextTick(function () {
-          for (var i = 0; i < this.selectRolesTableData.length; i++) {
-            for (let j = 0; j < arr.length; j++) {
-              if (this.selectRolesTableData[i].rolesName === arr[j]) {
-                this.$refs.multipleTable6.toggleRowSelection(this.selectRolesTableData[i]);
-                //  this.selectRolesTableData[i].checked = true
-              } else {
-                //  this.selectRolesTableData[i].checked = false
-              }
-            }
-          }
-        })
-        // this.$refs.multipleTable.clearSelection();
-
-
-      },
-      handleCloseTag5(row, item) {
-        // console.log(arr)
-        let index = row.rolesArr.findIndex(v => v === item)
-        if (index >= 0) {
-          row.rolesArr.splice(index, 1)
-        }
-        let userName = row.userName
-        row.userName = "123"
-        row.userName = userName
-        console.log(arr)
-
+      
+      
+      sendSelectRoles5(row){
+        this.selectArr = row.arr
+         this.eventTableIndex = row.index
+          this.selectRolesVisible6 = true
       },
       handleSelectionChange6(val) {
         console.log(val)
