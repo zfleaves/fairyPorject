@@ -55,6 +55,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="isFlag"
           width="200"
           prop=""
           label="操作">
@@ -76,6 +77,10 @@ export default {
       multipleSelection5:{
         type:Array,
         default:()=>[]
+      },
+      isFlag:{
+        type:Boolean,
+        default:false
       }
     },
     methods:{

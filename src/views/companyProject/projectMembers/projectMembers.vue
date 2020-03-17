@@ -132,7 +132,7 @@
               @selectRolesSubmit5="selectRolesSubmit5"
               ></project-members2>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" class="selectRolesAgain" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
+    <!-- <el-dialog :close-on-click-modal="false" class="selectRolesAgain" center title="选择岗位" width="60%" v-if="selectRolesVisible6"
                :visible.sync="selectRolesVisible6">
               <select-roles-component2 :selectRolesTableData="selectRolesTableData"
               @selectRolesCancel6="selectRolesCancel6"
@@ -140,7 +140,7 @@
               :selectArr="selectArr"
               @handleSelectionChange6="handleSelectionChange6"
               ></select-roles-component2>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 
 </template>
@@ -157,15 +157,14 @@
   import selectRolesComponent from '../component/selectRolesComponent'
   import selectProjectMembersComponent from '../component/selectProjectMembersComponent'
   import projectMembers2 from '../component/projectMembers2'
-  import selectRolesComponent2 from '../component/selectRolesComponent2'
+  // import selectRolesComponent2 from '../component/selectRolesComponent2'
   
 
   export default {
     name: 'projectMembers',
     components: {
       ViewPermissionsComponent, projectMembersComponent, 
-      selectRolesComponent, selectProjectMembersComponent,projectMembers2,
-      selectRolesComponent2
+      selectRolesComponent, selectProjectMembersComponent,projectMembers2
     },
     data() {
       return {
@@ -195,7 +194,7 @@
         // multipleSelection4: [],
         multipleSelection5: [],
         selectProjectMembersVisible5: false,
-        selectRolesVisible6: false,
+        // selectRolesVisible6: false,
         multipleSelection6: [],
         selectRolesTableData6: [],
         cloneMultipleSelection4: [],
@@ -204,7 +203,8 @@
         defaultOrgId: 0,
         selectRolesArr: [],
         params4: '',
-        selectArr:[]
+        selectArr:[],
+        selectRolesFlag:false
       }
     },
     created() {
@@ -262,6 +262,7 @@
       },
       //修改
       handleEdit(row) {
+        this.selectRolesFlag = false
         this.projectMembersVisible = true
 
         this.eventObj = JSON.parse(JSON.stringify(row))
@@ -276,7 +277,12 @@
       },
       //获得multipleSelection
       sendMultipleSelection(val) {
-        this.multipleSelection = val;
+        if(this.selectRolesFlag){//为真就是添加弹窗的选中角色
+           this.multipleSelection6 = val;
+        }else{//为false就是修改弹窗的选中角色
+            this.multipleSelection = val;
+        }
+     
       },
       //
       selectRoles(arr) {
@@ -344,10 +350,27 @@
 
       //选择岗位确定
       selectRolesSubmit() {
-        // console.log(this.multipleSelection)
-        let Arr = JSON.parse(JSON.stringify(this.multipleSelection))
-        this.projectMembersTableData[0].rolesNames = Arr.map(v => v.rolesName)
-        this.selectRolesVisible = false;
+        if(this.selectRolesFlag){
+           console.log(this.multipleSelection6)
+          let Arr = JSON.parse(JSON.stringify(this.multipleSelection6))
+          let userName = this.multipleSelection5[this.eventTableIndex].userName;
+          this.multipleSelection5[this.eventTableIndex].userName = '小仙女';
+          this.multipleSelection5[this.eventTableIndex].userName = userName;
+          // this.multipleSelection5[this.eventTableIndex].rolesArr = Arr.map(v => v.rolesName)
+          this.$set(this.multipleSelection5[this.eventTableIndex], 'rolesArr', Arr.map(v => v.rolesName))
+          // this.eventItem.rolesArr = Arr.map(v=>v.rolesName)
+          this.selectRolesVisible = false;
+          console.log(this.multipleSelection5)
+          //    console.log(this.eventItem)
+          // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
+          // this.selectRolesVisible = false;
+          this.$forceUpdate();
+        }else{
+            let Arr = JSON.parse(JSON.stringify(this.multipleSelection))
+            this.projectMembersTableData[0].rolesNames = Arr.map(v => v.rolesName)
+            this.selectRolesVisible = false;
+        }
+      
 
       },
       isSelectRolesCancel() {
@@ -395,6 +418,7 @@
       // },
       //添加项目成员
       handleClickAdd() {
+        this.selectRolesFlag = true
         this.selectProjectMembersVisible = true
         this.orgsList = []
         getOrgsList().then(res => {
@@ -539,32 +563,10 @@
       
       
       sendSelectRoles5(row){
-        this.selectArr = row.arr
+        this.selectRolesArr = row.arr
          this.eventTableIndex = row.index
-          this.selectRolesVisible6 = true
-      },
-      handleSelectionChange6(val) {
-        console.log(val)
-        this.multipleSelection6 = val;
-      },
-      selectRolesSubmit6() {
-        console.log(this.multipleSelection6)
-        let Arr = JSON.parse(JSON.stringify(this.multipleSelection6))
-        let userName = this.multipleSelection5[this.eventTableIndex].userName;
-        this.multipleSelection5[this.eventTableIndex].userName = '小仙女';
-        this.multipleSelection5[this.eventTableIndex].userName = userName;
-        // this.multipleSelection5[this.eventTableIndex].rolesArr = Arr.map(v => v.rolesName)
-        this.$set(this.multipleSelection5[this.eventTableIndex], 'rolesArr', Arr.map(v => v.rolesName))
-        // this.eventItem.rolesArr = Arr.map(v=>v.rolesName)
-        this.selectRolesVisible6 = false;
-        console.log(this.multipleSelection5)
-        //    console.log(this.eventItem)
-        // this.projectMembersTableData[0].rolesNames = Arr.map(v=>v.rolesName)
-        // this.selectRolesVisible = false;
-        this.$forceUpdate();
-      },
-      selectRolesCancel6() {
-        this.selectRolesVisible6 = false;
+          // this.selectRolesVisible6 = true
+          this.selectRolesVisible = true
       },
       setArr(arr) {
         for (let i in arr) {
