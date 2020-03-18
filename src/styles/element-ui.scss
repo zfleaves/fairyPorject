@@ -822,3 +822,25 @@
       white-space: nowrap;
     }
 }
+.el-range-editor.el-input__inner{
+  width: 100%;
+}
+.sporadicPurchase{
+  .searchCon{
+    .el-input__inner{
+      height: 35px;
+    }
+    button{
+      height: 40px;
+      width: 100px;
+      padding: 0;
+    }
+  }
+ 
+  
+}
+.sporadicPurchaseSet{
+  .el-form-item{
+    margin-bottom: 0;
+  }
+}

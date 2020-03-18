@@ -476,6 +476,12 @@ export const constantRouterMap = [
     name: 'procurement',
     component: () => import('views/lyout/index'),
     children: [
+      {
+        path: 'sporadicPurchaseSet/:type/:id',
+        name: 'sporadicPurchaseSet',
+        component: () => import('views/procurementPlan/sporadicPurchase/sporadicPurchaseSet'),
+        meta: {title: "零星采购添加", name: "零星采购添加", isCached: 1, lastRouteName: 'procurement'}
+      }
       // {
       //   path: 'procurementPlan',
       //   name: 'procurementPlan',

@@ -1,6 +1,5 @@
 import request from '../../util/ajax'
 
-//条件分页查询数据字典记录
 export function getSysdatadicList(data){
     return request({
         url:'/sysbase/sysdatadic/list',
@@ -9,7 +8,6 @@ export function getSysdatadicList(data){
        
     })
 }
-
 //字典主键关联查询数据项记录
 export function getCondatadicDetailList(id){
     return request({
