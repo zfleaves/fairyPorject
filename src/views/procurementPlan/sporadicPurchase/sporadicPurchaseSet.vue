@@ -39,7 +39,7 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="单据编号">
-                            <el-input clearable size="small" disabled
+                            <el-input v-model="projectForm.docNo" clearable size="small" disabled
                                         placeholder="单据编号由系统自动生成">
                             </el-input>
                         </el-form-item>
@@ -47,14 +47,14 @@
                 </el-row>
                 <el-row style="margin: 15px 0px 0 0;">
                     <el-col :span="8">
-                        <el-form-item label="费用总金额(元)">
-                            <el-input clearable size="small" disabled v-model="projectForm.sporadicAmount"
+                        <el-form-item prop="sporadicAmount" label="费用总金额(元)">
+                            <el-input  clearable size="small" v-model="projectForm.sporadicAmount"
                                         placeholder="采购明细计算自动计算赋值">
                             </el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="采购事由或原因">
+                        <el-form-item prop="sporadicReason" label="采购事由或原因">
                             <el-input
                             type="textarea"
                             autosize
@@ -70,7 +70,9 @@
                             :flowStatus="flowStatus"
                             :attachment="projectForm.attachmentId">
                         </uploadFile> -->
+                        <span v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
                         <el-button  type="text" size="small">上传</el-button>
+                        <el-button v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -102,118 +104,145 @@
         <div class="sporadicPurchaseSetCon">
             <div class="btn">
                 <el-button  size="small" style="margin-right:10px;"
-                        type="danger" @click="handleBatchDeletion" icon="el-icon-circle-check" plain>批量删除
+                        type="danger" @click="handleBatchDeletion1" icon="el-icon-circle-check" plain>批量删除
                 </el-button>
                 <el-button  size="small" @click="selectDetail"
                         type="primary" icon="el-icon-circle-check">添加明细
                 </el-button>
             </div>
             <div class="table" style="margin-top: 10px;">
+                <el-form :rules="model.rules" :model="model"  ref="tableDataFrom">
                 <el-table
-                ref="tableData"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                :header-cell-style="{'background-color': '#fafafa'}"
-                stripe border
-                @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55">
-                </el-table-column>
-                <el-table-column type="index" label="序号" width="55">
-                </el-table-column>
-                <el-table-column label="物资名称" prop="materialName" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                    <el-number
-                        size="small" placeholder="请输入物资名称"
-                        v-model="scope.row.materialName"
-                       >
-                    </el-number>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="stands" label="规格" width="80" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                    <el-number
-                        size="small" placeholder="请输入规格"
-                        v-model="scope.row.stands"
-                       >
-                    </el-number>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="mode" label="型号" width="80" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                    <el-number
-                        size="small" placeholder="请输入型号"
-                        v-model="scope.row.mode"
-                       >
-                    </el-number>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="unit" label="单位" width="80">
-                    <template slot-scope="scope">
-                    <el-number
-                        size="small" placeholder="请输入单位"
-                        v-model="scope.row.unit"
-                       >
-                    </el-number>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="sporadicNum"  :show-overflow-tooltip="!flowStatus" label="数量">
-                    <template slot-scope="scope">
-                    <el-number
-                      
-                        @change="changeTaxableAmount(scope.row)"
-                        size="small" placeholder="请输入数量"
-                        v-model="scope.row.sporadicNum"
-                        controls-position="right" :min="0">
-                    </el-number>
-                    <!-- <span v-else>{{scope.row.quantityIn}}</span> -->
-                    </template>
-                </el-table-column>
-                <el-table-column prop="sporadicPrice" label="单价(元)">
-                    <template slot-scope="scope">
-                    <el-number
-        
-                        @change="changeTaxableAmount(scope.row)"
-                        :precision="2"
-                        size="small" placeholder="请输入单价(元)"
-                        v-model="scope.row.sporadicPrice"
-                        controls-position="right" :min="0">
-                    </el-number>
-                    <!-- <span v-else>{{scope.row.averagePrice | setMoney}}</span> -->
-                    </template>
-                </el-table-column>
-                <el-table-column label="金额(元)" :show-overflow-tooltip="!flowStatus" >
-                    <template slot-scope="scope">
-                    <span>{{scope.row.sporadicAmount | setMoney}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="brand" width="150" label="品牌" :show-overflow-tooltip="!flowStatus">
-                    <template slot-scope="scope">
-                    <el-input clearable size="small" v-model="scope.row.brand"
-                                placeholder="请输入生产厂家或品牌">
-                    </el-input>
-                    <!-- <span v-else>{{scope.row.brand}}</span> -->
-                    </template>
-                </el-table-column>
-                <el-table-column prop="remarks" width="150" label="备注" :show-overflow-tooltip="!flowStatus">
-                    <template slot-scope="scope">
-                    <el-input  autosize type="textarea" v-model="scope.row.remarks">
-                    </el-input>
-                    <!-- <span v-else>{{scope.row.remarks}}</span> -->
-                    </template>
-                </el-table-column>
-                </el-table>
+                    ref="tableData"
+                    :data="model.tableData"
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    :header-cell-style="{'background-color': '#fafafa'}"
+                    stripe border
+                    @selection-change="handleSelectionChange1">
+                    <el-table-column type="selection" width="55">
+                    </el-table-column>
+                    <el-table-column type="index" label="序号" width="55">
+                    </el-table-column>
+                    <el-table-column label="物资名称" prop="materialName" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].materialName'" :rules='model.rules.materialName'>
+                                <el-input clearable size="small"  v-model="scope.row.materialName"
+                                            placeholder="请输入物资名称">
+                                </el-input>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="stands" label="规格" width="80" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].stands'" :rules='model.rules.stands'>
+                                <el-input clearable size="small"  v-model="scope.row.stands"
+                                            placeholder="请输入规格">
+                                </el-input>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="mode" label="型号" width="80" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                                <el-input clearable size="small"  v-model="scope.row.mode"
+                                                placeholder="请输入型号">
+                                </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="unit" label="单位" width="80">
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].unit'" :rules='model.rules.unit'>
+                                <el-input clearable size="small"  v-model="scope.row.unit"
+                                                placeholder="请输入单位">
+                                </el-input>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="sporadicNum"  :show-overflow-tooltip="!flowStatus" label="数量">
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicNum'" :rules='model.rules.sporadicNum'>
+                                <el-number
+                                    @change="changeTaxableAmount(scope.row)"
+                                    size="small" placeholder="请输入数量"
+                                    v-model="scope.row.sporadicNum"
+                                    controls-position="right" :min="0">
+                                </el-number>
+                            </el-form-item>
+                        <!-- <span v-else>{{scope.row.quantityIn}}</span> -->
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="sporadicPrice" label="单价(元)">
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicPrice'" :rules='model.rules.sporadicPrice'>
+                                <el-number
+                    
+                                    @change="changeTaxableAmount(scope.row)"
+                                    :precision="2"
+                                    size="small" placeholder="请输入单价(元)"
+                                    v-model="scope.row.sporadicPrice"
+                                    controls-position="right" :min="0">
+                                </el-number>
+                            </el-form-item>
+                        <!-- <span v-else>{{scope.row.averagePrice | setMoney}}</span> -->
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="金额(元)" :show-overflow-tooltip="!flowStatus" >
+                        <template slot-scope="scope">
+                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicAmount'" :rules='model.rules.sporadicAmount'>
+                                <el-number
+                                    :precision="2"
+                                    
+                                    size="small" placeholder="请填写"
+                                    v-model="scope.row.sporadicAmount"
+                                    controls-position="right" :min="0">
+                                </el-number>
+                                <!-- <span>{{scope.row.sporadicAmount | setMoney}}</span> -->
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="brand" width="150" label="品牌" :show-overflow-tooltip="!flowStatus">
+                        <template slot-scope="scope">
+                        <el-input clearable size="small" v-model="scope.row.brand"
+                                    placeholder="请输入生产厂家或品牌">
+                        </el-input>
+                        <!-- <span v-else>{{scope.row.brand}}</span> -->
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="remarks" width="150" label="备注" :show-overflow-tooltip="!flowStatus">
+                        <template slot-scope="scope">
+                        <el-input  autosize type="textarea" v-model="scope.row.remarks">
+                        </el-input>
+                        <!-- <span v-else>{{scope.row.remarks}}</span> -->
+                        </template>
+                    </el-table-column>
+                    </el-table>
+                </el-form>
             </div>
         </div>
     </div>
 </template>
 <script>
-import {getPursporadicProjectsList,savePursporadicList} from 'api/procurementPlan'
+import {getPursporadicProjectsList,savePursporadicList,getPursporadicInf,getPursporadicDetailList,getFilepathList} from 'api/procurementPlan'
 import {dataDictionary,closeRoute,freshRouter} from 'mixins'
 import Auth from 'util/auth'
+import {formatYear} from 'util';
 export default {
     name:'sporadicPurchaseSet',
+    mixins:[dataDictionary,closeRoute,freshRouter],
     data(){
+            var changeSporadicAmount = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('请填写费用总金额'));
+                }else{
+                    if (isNaN(value)) {
+                        this.projectForm.sporadicAmount = 0
+                    } else {
+                
+                    callback();
+                    }
+                }
+                
+            };
         return{
             labelPosition:'right',
             projectForm:{
@@ -229,23 +258,64 @@ export default {
                 sporadicAmount: '',
                 sporadicReason: "",
                 updateBy: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).userId : '',
+                docNo:''
             },
             rules: {
-                projectId: [
-                    {required: true, message: '请选择项目名称', trigger: 'change'}
-                ]
+                    projectId: [
+                        {required: true, message: '请选择项目名称', trigger: 'change'}
+                    ],
+                    sporadicReason:[
+                        {required: true, message: '请填写采购事由或原因', trigger: 'blur'}
+                    ],
+                    sporadicAmount:[
+                        {required: true, message: '请填写费用总金额', validator: changeSporadicAmount, trigger: 'blur'}
+                    ]
+                },
+            model:{
+                rules: {
+                    materialName: [
+                        {required: true,message: ' ', trigger: 'blur'}
+                    ],
+                    stands:[
+                        {required: true,message: ' ',trigger: 'blur'}
+                    ],
+                    unit:[
+                        {required: true,message: ' ', trigger: 'blur'}
+                    ],
+                    sporadicNum:[
+                        {required: true,message: ' ', trigger: 'blur'}
+                    ],
+                    sporadicPrice:[
+                        {required: true,message: ' ', trigger: 'blur'}
+                    ],
+                    sporadicAmount:[
+                        {required: true,message: ' ', trigger: 'blur'}
+                    ]
+                },
+                tableData:[]
             },
+            
             pursporadicProjectsList:[],
-            tableData:[],
-            flowStatus:false
+            
+            flowStatus:false,
+            selectTableList:[],
+            id:'',
+            type:'',
+            filepathList:[]
 
         }
     },
     created(){
-            
+        let params =   this.$route.params 
+        this.id=Base64.decode(params.id);
+        this.type=Base64.decode(params.type);
     },
     mounted(){
         this._getPursporadicProjectsList()
+        if(this.type === 'edit'){
+            this._getPursporadicInf()
+            this._getPursporadicDetailList()
+        }
     },
     methods:{
         //切换项目
@@ -258,52 +328,154 @@ export default {
         },
         //获取零星采购添加项目名称
         _getPursporadicProjectsList(){
+            console.log(this.menuId)
             getPursporadicProjectsList(this.menuId).then(res=>{
                 if(res.status===0){
                     this.pursporadicProjectsList = res.results.proProjectDtos
                 }
             })
         },
-        //表格勾选
-        handleSelectionChange(){
-
+        ////修改零星采购 项目名称赋值
+        _getPursporadicInf(){
+            getPursporadicInf(this.id).then(res=>{
+                if(res.status === 0){
+                    this.projectForm.projectId =  res.results.projectId
+                    this.projectForm.projectManager =  res.results.projectManager
+                    this.projectForm.docNo =  res.results.docNo
+                    this.projectForm.sporadicAmount =  res.results.sporadicAmount
+                    this.projectForm.sporadicReason =  res.results.sporadicReason
+                    this.projectForm.attachmentId =  res.results.attachmentId
+                    this.projectForm.remarks =  res.results.remarks
+                    this.projectForm.inandoutTime =  formatYear(res.results.createTime)
+                    // console.log(this.projectForm.createTime)
+                    // formatYear(res.results.createTime)
+                    this._getFilepathList()
+                }
+            })
+        },
+        ////修改零星采购 详情表格赋值
+        _getPursporadicDetailList(){
+            getPursporadicDetailList(this.id).then(res=>{
+                if(res.status === 0){
+                    let resultTableData = res.results
+                    this.model.tableData = JSON.parse(JSON.stringify(resultTableData))
+                }
+            })
+        },
+        //
+        _getFilepathList(){
+            let fileIds = []
+            fileIds.push(this.projectForm.attachmentId)
+            let data = {
+                fileIds:fileIds
+            }
+            getFilepathList(data).then(res=>{
+                this.filepathList = res.results
+            })
         },
         // 保存数据
-        submitoProjectFrom(){
-          let index = this.pursporadicProjectsList.findIndex(v=>v.id === this.projectForm.projectId)
-          if(index>=0){
-             let currentItem = this.pursporadicProjectsList[index]
-             this.projectForm.orgId =  currentItem.orgId
-             this.projectForm.projectManager = currentItem.pmName
-             this.projectForm.projectName = currentItem.companyName
-          }
-          let purSporadicDetail = this.tableData
-          let data = {
-              ...this.projectForm,
-              purSporadicDetail
-          }
-         savePursporadicList(data).then(res=>{
-                if(res.status === 0){
-                     this.$message({
-                        message: '添加成功',
-                        type: 'success'
-                    });
-                }else{
-                     this.$message.error('添加失败');
+        submitoProjectFrom(formName){
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    if(!this.model.tableData.length){
+                        this.$message.error('请选择添加明细');
+                        return
+                    }
+                     this.$refs["tableDataFrom"].validate((valid,model)=>{
+                        if(valid){
+                            console.log(this.model.tableData)
+                            // return
+                            let index = this.pursporadicProjectsList.findIndex(v=>v.id === this.projectForm.projectId)
+                            if(index>=0){
+                                let currentItem = this.pursporadicProjectsList[index]
+                                this.projectForm.orgId =  currentItem.orgId
+                                this.projectForm.projectManager = currentItem.pmName
+                                this.projectForm.projectName = currentItem.companyName
+                            }
+                            let purSporadicDetail = this.model.tableData
+                            let data = {
+                                ...this.projectForm,
+                                purSporadicDetail
+                            }
+                            savePursporadicList(data).then(res=>{
+                                    if(res.status === 0){
+                                        this.$message({
+                                            message: '添加成功',
+                                            type: 'success'
+                                        });
+                                        this.setRoute()
+                                    }else{
+                                        this.$message.error('添加失败');
+                                    }
+                            })
+                        }else{
+                            return
+                        }
+                    })
+                  
+                } else {
+                    console.log('error submit!!');
+                    return false;
                 }
-         })
+            });
+            
+          
          
         },
         //取消保存
         cancelProjectFrom(){
-
+            this.$confirm(`当前数据未保存，确定取消保存吗`, '确定', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            this.setRoute()
+        }).catch((e) => {
+           return
+        });
+            
         },
-        //批量删除
-        handleBatchDeletion(){
-
+        //选择明细表格数据
+        handleSelectionChange1(val) {
+            this.selectTableList = val;
+        },
+        // 明细批量删除
+        handleBatchDeletion1() {
+        if (this.selectTableList.length === 0) {
+            this.$message({
+            message: '请选择所要删除数据',
+            type: 'error'
+            });
+            return
+        }
+        this.$confirm(`该删除操作无法恢复数据, 是否删除?`, '删除', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            this.selectTableList.forEach(item => {
+                console.log(item)
+            this.model.tableData.splice(this.model.tableData.indexOf(item), 1)
+            });
+            this.$message({
+            type: 'success',
+            message: '删除成功'
+            })
+            this.$refs.tableDataFrom.clearSelection();
+        }).catch((e) => {
+            // console.log(e);
+            // this.$message({
+            // type: 'info',
+            // message: '已取消删除'
+            // });
+        });
         },
         // 添加明细
         selectDetail(){
+            if(!this.projectForm.projectId){
+                 this.$message.error('请选择项目名称');
+                 return
+            }
             let obj = {
                 brand: "",
                 classifyCode: "",
@@ -323,12 +495,18 @@ export default {
                 stands: "",
                 unit: ""
             }
-            this.tableData.push(obj)
+            this.model.tableData.push(obj)
         },
         //改变含税金额
         changeTaxableAmount(item) {
             console.log(item);
             item.sporadicAmount = item.sporadicNum * item.sporadicPrice;
+            let sum = 0
+            for(let i in this.model.tableData){
+                let item = this.model.tableData[i]
+                sum += item.sporadicAmount
+            }
+            this.projectForm.sporadicAmount = sum
         },
     }
 }

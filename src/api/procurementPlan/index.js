@@ -31,8 +31,37 @@ export function getPursporadicProjectsList(menuId){
        
     })
 }
-//获取零星采购修改表格物资
-export function getDetailList(id){
+// //获取零星采购修改表格物资
+// export function getDetailList(id){
+//     return request({
+//         url:'/contract/pursporadic/detail/list',
+//         method:'get',
+//         params:{
+//             id
+//         }
+//     })
+// }
+//添加零星采购
+export function savePursporadicList(data){
+    return request({
+        url:'/contract/pursporadic/save',
+        method:'post',
+        data
+    })
+}
+
+//修改零星采购 项目名称赋值
+export function getPursporadicInf(id){
+    return request({
+        url:'/contract/pursporadic/inf',
+        method:'get',
+        params:{
+            id
+        }
+    })
+}
+//修改零星采购 详情表格赋值
+export function getPursporadicDetailList(id){
     return request({
         url:'/contract/pursporadic/detail/list',
         method:'get',
@@ -41,11 +70,21 @@ export function getDetailList(id){
         }
     })
 }
-//添加零星采购
-export function savePursporadicList(data){
+//修改 获得附件内容
+export function getFilepathList(data){
     return request({
-        url:'/contract/pursporadic/save',
+        url:'/sysbase/confiles/filepath/list',
         method:'post',
         data
+    })
+}
+//删除
+export function deletePursporadic(id){
+    return request({
+        url:'/contract/pursporadic/delete',
+        method:'get',
+        params:{
+            id
+        }
     })
 }

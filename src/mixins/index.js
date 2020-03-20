@@ -304,6 +304,34 @@ export const freshRouter = {
         });
       });
     },
+    // 删除数据
+    deleteData2(row, deletefun, callback) {
+      if (!this.judgeIsOneself(row)) {
+        this.editErrorTips('删除');
+        return
+      }
+      this.$confirm(`此操作将永久删除此条数据, 是否删除?`, '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deletefun(row.id).then(res => {
+          if (res.status === 0) {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            callback();
+          }
+        })
+      }).catch((e) => {
+        // console.log(e);
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
     //点击单选框
     handleSelectionChange(selection) {
       // console.log(selection);

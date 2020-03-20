@@ -127,8 +127,8 @@
                     label="操作"
                     width="160">
                     <template slot-scope="scope">
-                        <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-                        <el-button type="text" size="small">删除</el-button>
+                        <el-button @click="handleClickEdit(scope.row)" type="text" size="small">修改</el-button>
+                        <el-button @click="handleClickDelet(scope.row)" type="text" size="small">删除</el-button>
                     </template>
                     </el-table-column>
                 </el-table>
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-    import {getMenuProjectsList,getPursporadicList} from 'api/procurementPlan'
+    import {getMenuProjectsList,getPursporadicList,deletePursporadic} from 'api/procurementPlan'
     import {dataDictionary,closeRoute,freshRouter} from 'mixins'
     import buttonComponent2 from 'components/buttonComponent/buttonComponent2'
     export default {
@@ -217,7 +217,16 @@
             },
             //修改
             handleClickEdit(row) {
+                if (!this.judgeIsOneself(row)) {
+                    this.editErrorTips('修改');
+                    return
+                }
                 this.changeRouter(row.id, 'edit', 'sporadicPurchaseSet');
+                
+            },
+            //删除
+            handleClickDelet(row) {
+                 this.deleteData2(row, deletePursporadic, this._getPursporadicList);  
             },
             //查看
             handleInfo(row) {
