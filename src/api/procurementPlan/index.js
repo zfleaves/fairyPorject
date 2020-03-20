@@ -82,9 +82,20 @@ export function getFilepathList(data){
 export function deletePursporadic(id){
     return request({
         url:'/contract/pursporadic/delete',
-        method:'get',
+        method:'put',
         params:{
             id
+        }
+    })
+}
+//判断是否有流程审批功能
+export function getPursporadicSubmitinf(sid,projectId){
+    return request({
+        url:'/contract/pursporadic/submitinf',
+        method:'get',
+        params:{
+            sid,
+            projectId
         }
     })
 }

@@ -4,11 +4,13 @@
             <div class="titles">
                 <span class="title">零星采购</span>
                 <el-button  size="small"
+                        :disabled="flowStatus"
                         @click="submitoProjectFrom('projectForm')"
                         type="primary" icon="el-icon-circle-check">
                 保存数据
                 </el-button>
                 <el-button size="small"
+                        :disabled="flowStatus"
                         style="margin-right:20px;" @click="cancelProjectFrom" type="danger"
                         icon="el-icon-circle-check" plain>取消保存
                 </el-button>
@@ -21,7 +23,8 @@
                     <el-col :span="8">
                         <el-form-item label="项目名称" prop="projectId">
                         <el-select
-                            @change="getPmName"
+                            :disabled="flowStatus"
+                            @change="changeSelectProject"
                             clearable  size="small" v-model="projectForm.projectId"
                             placeholder="请选择项目名称">
                             <el-option v-for="(item,index) in pursporadicProjectsList" :key="index" :label="item.proName"
@@ -48,7 +51,7 @@
                 <el-row style="margin: 15px 0px 0 0;">
                     <el-col :span="8">
                         <el-form-item prop="sporadicAmount" label="费用总金额(元)">
-                            <el-input  clearable size="small" v-model="projectForm.sporadicAmount"
+                            <el-input :disabled="flowStatus"  clearable size="small" v-model="projectForm.sporadicAmount"
                                         placeholder="采购明细计算自动计算赋值">
                             </el-input>
                         </el-form-item>
@@ -56,6 +59,7 @@
                     <el-col :span="8">
                         <el-form-item prop="sporadicReason" label="采购事由或原因">
                             <el-input
+                            :disabled="flowStatus"
                             type="textarea"
                             autosize
                             placeholder="请输入采购事由或原因"
@@ -70,9 +74,9 @@
                             :flowStatus="flowStatus"
                             :attachment="projectForm.attachmentId">
                         </uploadFile> -->
-                        <span v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
-                        <el-button  type="text" size="small">上传</el-button>
-                        <el-button v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
+                        <span :disabled="flowStatus" v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
+                        <el-button :disabled="flowStatus"  type="text" size="small">上传</el-button>
+                        <el-button :disabled="flowStatus" v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -80,6 +84,7 @@
                     <el-col :span="8">
                         <el-form-item label="备注">
                         <el-input
+                            :disabled="flowStatus"
                             type="textarea"
                             autosize
                             placeholder="请输入备注"
@@ -90,6 +95,7 @@
                     <el-col :span="8">
                         <el-form-item label="申请日期">
                         <el-date-picker
+                            :disabled="flowStatus"
                             size="small"
                             v-model="projectForm.inandoutTime"
                             value-format="yyyy-MM-dd HH:mm:ss"
@@ -103,10 +109,10 @@
         </div>
         <div class="sporadicPurchaseSetCon">
             <div class="btn">
-                <el-button  size="small" style="margin-right:10px;"
+                <el-button  size="small" :disabled="flowStatus" style="margin-right:10px;"
                         type="danger" @click="handleBatchDeletion1" icon="el-icon-circle-check" plain>批量删除
                 </el-button>
-                <el-button  size="small" @click="selectDetail"
+                <el-button :disabled="flowStatus" size="small" @click="selectDetail"
                         type="primary" icon="el-icon-circle-check">添加明细
                 </el-button>
             </div>
@@ -126,93 +132,100 @@
                     </el-table-column>
                     <el-table-column label="物资名称" prop="materialName" show-overflow-tooltip>
                         <template slot-scope="scope">
-                            <el-form-item :prop="'tableData[' + scope.$index + '].materialName'" :rules='model.rules.materialName'>
-                                <el-input clearable size="small"  v-model="scope.row.materialName"
+                            <el-form-item  :prop="'tableData[' + scope.$index + '].materialName'" :rules='model.rules.materialName'>
+                                <el-input v-if="!flowStatus" clearable size="small"  v-model="scope.row.materialName"
                                             placeholder="请输入物资名称">
                                 </el-input>
+                                 <span v-else>{{scope.row.materialName}}</span>
                             </el-form-item>
+                           
                         </template>
                     </el-table-column>
                     <el-table-column prop="stands" label="规格" width="80" show-overflow-tooltip>
                         <template slot-scope="scope">
-                            <el-form-item :prop="'tableData[' + scope.$index + '].stands'" :rules='model.rules.stands'>
-                                <el-input clearable size="small"  v-model="scope.row.stands"
+                            <el-form-item  :prop="'tableData[' + scope.$index + '].stands'" :rules='model.rules.stands'>
+                                <el-input v-if="!flowStatus" clearable size="small"  v-model="scope.row.stands"
                                             placeholder="请输入规格">
                                 </el-input>
+                                <span v-else>{{scope.row.stands}}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column prop="mode" label="型号" width="80" show-overflow-tooltip>
                         <template slot-scope="scope">
-                                <el-input clearable size="small"  v-model="scope.row.mode"
+                                <el-input v-if="!flowStatus" clearable size="small"  v-model="scope.row.mode"
                                                 placeholder="请输入型号">
                                 </el-input>
+                                 <span v-else>{{scope.row.mode}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="unit" label="单位" width="80">
                         <template slot-scope="scope">
                             <el-form-item :prop="'tableData[' + scope.$index + '].unit'" :rules='model.rules.unit'>
-                                <el-input clearable size="small"  v-model="scope.row.unit"
+                                <el-input v-if="!flowStatus" clearable size="small"  v-model="scope.row.unit"
                                                 placeholder="请输入单位">
                                 </el-input>
+                                <span v-else>{{scope.row.unit}}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column prop="sporadicNum"  :show-overflow-tooltip="!flowStatus" label="数量">
                         <template slot-scope="scope">
-                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicNum'" :rules='model.rules.sporadicNum'>
+                            <el-form-item v-if="!flowStatus" :prop="'tableData[' + scope.$index + '].sporadicNum'" :rules='model.rules.sporadicNum'>
                                 <el-number
+                                    v-if="!flowStatus"
                                     @change="changeTaxableAmount(scope.row)"
                                     size="small" placeholder="请输入数量"
                                     v-model="scope.row.sporadicNum"
                                     controls-position="right" :min="0">
                                 </el-number>
+                                 <span v-else>{{scope.row.sporadicNum}}</span>
                             </el-form-item>
-                        <!-- <span v-else>{{scope.row.quantityIn}}</span> -->
+                       
                         </template>
                     </el-table-column>
                     <el-table-column prop="sporadicPrice" label="单价(元)">
                         <template slot-scope="scope">
-                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicPrice'" :rules='model.rules.sporadicPrice'>
+                            <el-form-item  :prop="'tableData[' + scope.$index + '].sporadicPrice'" :rules='model.rules.sporadicPrice'>
                                 <el-number
-                    
+                                    v-if="!flowStatus"
                                     @change="changeTaxableAmount(scope.row)"
                                     :precision="2"
                                     size="small" placeholder="请输入单价(元)"
                                     v-model="scope.row.sporadicPrice"
                                     controls-position="right" :min="0">
                                 </el-number>
+                                 <span v-else>{{scope.row.remarks}}</span>
                             </el-form-item>
-                        <!-- <span v-else>{{scope.row.averagePrice | setMoney}}</span> -->
                         </template>
                     </el-table-column>
                     <el-table-column label="金额(元)" :show-overflow-tooltip="!flowStatus" >
                         <template slot-scope="scope">
-                            <el-form-item :prop="'tableData[' + scope.$index + '].sporadicAmount'" :rules='model.rules.sporadicAmount'>
+                            <el-form-item  :prop="'tableData[' + scope.$index + '].sporadicAmount'" :rules='model.rules.sporadicAmount'>
                                 <el-number
                                     :precision="2"
-                                    
+                                    v-if="!flowStatus"
                                     size="small" placeholder="请填写"
                                     v-model="scope.row.sporadicAmount"
                                     controls-position="right" :min="0">
                                 </el-number>
-                                <!-- <span>{{scope.row.sporadicAmount | setMoney}}</span> -->
+                                <span v-else>{{scope.row.sporadicAmount | setMoney}}</span>
                             </el-form-item>
                         </template>
                     </el-table-column>
                     <el-table-column prop="brand" width="150" label="品牌" :show-overflow-tooltip="!flowStatus">
                         <template slot-scope="scope">
-                        <el-input clearable size="small" v-model="scope.row.brand"
+                        <el-input v-if="!flowStatus" clearable size="small" v-model="scope.row.brand"
                                     placeholder="请输入生产厂家或品牌">
                         </el-input>
-                        <!-- <span v-else>{{scope.row.brand}}</span> -->
+                        <span v-else>{{scope.row.brand}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="remarks" width="150" label="备注" :show-overflow-tooltip="!flowStatus">
                         <template slot-scope="scope">
-                        <el-input  autosize type="textarea" v-model="scope.row.remarks">
+                        <el-input v-if="!flowStatus" autosize type="textarea" v-model="scope.row.remarks">
                         </el-input>
-                        <!-- <span v-else>{{scope.row.remarks}}</span> -->
+                        <span v-else>{{scope.row.remarks}}</span>
                         </template>
                     </el-table-column>
                     </el-table>
@@ -260,6 +273,9 @@ export default {
                 updateBy: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).userId : '',
                 docNo:''
             },
+           
+
+
             rules: {
                     projectId: [
                         {required: true, message: '请选择项目名称', trigger: 'change'}
@@ -315,10 +331,54 @@ export default {
         if(this.type === 'edit'){
             this._getPursporadicInf()
             this._getPursporadicDetailList()
+        }else if(this.type === 'info'){
+            this.flowStatus = true
+            this._getPursporadicInf()
+            this._getPursporadicDetailList()
         }
+    },
+    watch:{
+        // "projectForm.projectId":{
+        //     handler(val, oldVal){
+        //      if(val !== oldVal){
+        //           this.$confirm(`您将更改项目名称，是否继续`, '确定', {
+        //             confirmButtonText: '确定',
+        //             cancelButtonText: '取消',
+        //             type: 'warning'
+        //         }).then(() => {
+                  
+        //           this.projectForm.projectId = val
+        //           this.getPmName()
+        //         }).catch((e) => {
+        //             this.projectForm.projectId = ''
+        //             return
+        //         });
+        //      }
+        //     },
+        //     deep:true
+        // }
     },
     methods:{
         //切换项目
+        changeSelectProject(q){
+            console.log(q)
+            console.log(this.projectForm.projectId)
+            // let this.projectForm.projectId
+            // if(q === )
+            //  this.$confirm(`您将更改项目名称，是否继续`, '确定', {
+            //         confirmButtonText: '确定',
+            //         cancelButtonText: '取消',
+            //         type: 'warning'
+            //     }).then(() => {
+                  
+            //       this.projectForm.projectId = q
+            //       this.getPmName()
+            //     }).catch((e) => {
+            //         this.projectForm.projectId = this.projectForm.projectId
+            //         return
+            //     });
+        },
+        //获得对应pmname
         getPmName(){
             let index = this.pursporadicProjectsList.findIndex(v=>v.id === this.projectForm.projectId)
             if(index>=0){
@@ -339,6 +399,7 @@ export default {
         _getPursporadicInf(){
             getPursporadicInf(this.id).then(res=>{
                 if(res.status === 0){
+                    this.dicInf = res.results
                     this.projectForm.projectId =  res.results.projectId
                     this.projectForm.projectManager =  res.results.projectManager
                     this.projectForm.docNo =  res.results.docNo
@@ -397,10 +458,23 @@ export default {
                                 ...this.projectForm,
                                 purSporadicDetail
                             }
+                            if(this.type === 'edit'){
+                                data.flowStatus = this.dicInf.flowStatus
+                                data.createName = this.dicInf.createName
+                                data.projectCode = this.pursporadicProjectsList[index].proCode
+                                data.taskId = this.dicInf.taskId
+                                data.updateBy = this.dicInf.updateBy
+                                data.updateTime = new Date().getTime()
+                                data.id = this.dicInf.id
+                            }
                             savePursporadicList(data).then(res=>{
+                                let msg = '添加'
+                                    if(this.type === 'edit'){
+                                        msg = '编辑'
+                                    }
                                     if(res.status === 0){
                                         this.$message({
-                                            message: '添加成功',
+                                            message: `${msg}成功`,
                                             type: 'success'
                                         });
                                         this.setRoute()
@@ -441,34 +515,34 @@ export default {
         },
         // 明细批量删除
         handleBatchDeletion1() {
-        if (this.selectTableList.length === 0) {
-            this.$message({
-            message: '请选择所要删除数据',
-            type: 'error'
+            if (this.selectTableList.length === 0) {
+                this.$message({
+                message: '请选择所要删除数据',
+                type: 'error'
+                });
+                return
+            }
+            this.$confirm(`该删除操作无法恢复数据, 是否删除?`, '删除', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.selectTableList.forEach(item => {
+                    console.log(item)
+                this.model.tableData.splice(this.model.tableData.indexOf(item), 1)
+                });
+                this.$message({
+                type: 'success',
+                message: '删除成功'
+                })
+                this.$refs.tableDataFrom.clearSelection();
+            }).catch((e) => {
+                // console.log(e);
+                // this.$message({
+                // type: 'info',
+                // message: '已取消删除'
+                // });
             });
-            return
-        }
-        this.$confirm(`该删除操作无法恢复数据, 是否删除?`, '删除', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            this.selectTableList.forEach(item => {
-                console.log(item)
-            this.model.tableData.splice(this.model.tableData.indexOf(item), 1)
-            });
-            this.$message({
-            type: 'success',
-            message: '删除成功'
-            })
-            this.$refs.tableDataFrom.clearSelection();
-        }).catch((e) => {
-            // console.log(e);
-            // this.$message({
-            // type: 'info',
-            // message: '已取消删除'
-            // });
-        });
         },
         // 添加明细
         selectDetail(){

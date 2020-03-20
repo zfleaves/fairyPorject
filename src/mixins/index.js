@@ -294,6 +294,7 @@ export const freshRouter = {
               message: this.$route.meta.title + '删除成功'
             })
             callback();
+           
           }
         })
       }).catch((e) => {

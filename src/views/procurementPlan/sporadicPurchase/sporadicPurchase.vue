@@ -6,14 +6,14 @@
                 <el-row :gutter="20">
                     <el-col :span="6">
                         <el-form-item label="流程状态">
-                            <el-select @change="_getPursporadicList()" clearable v-model="searchForm.flowStatus" placeholder="请选择流程状态">
+                            <el-select @change="_resetPursporadicList()" clearable v-model="searchForm.flowStatus" placeholder="请选择流程状态">
                                 <el-option v-for="(item,index) in flowStatusList" :key="index" :label="item.dataName" :value="item.dataValue"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="项目名称">
-                            <el-select @change="_getPursporadicList()" filterable clearable v-model="searchForm.projectName" placeholder="请选择或输入项目名称">
+                            <el-select @change="_resetPursporadicList()" filterable clearable v-model="searchForm.projectName" placeholder="请选择或输入项目名称">
                                 <el-option v-for="item in projectsList" :key="item.id" :label="item.proName" :value="item.proName"></el-option>
                             </el-select>
                         </el-form-item>
@@ -24,7 +24,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :offset="2" :span="4">
-                        <el-button type="warning" icon="el-icon-search" @click="_getPursporadicList()">搜索</el-button>
+                        <el-button type="warning" icon="el-icon-search" @click="_resetPursporadicList()">搜索</el-button>
                         <el-button icon="el-icon-search" @click="searchMore">{{searchMoreFlag?'普通搜索': '高级搜索'}}</el-button>
                     </el-col>
                 </el-row>
@@ -32,7 +32,7 @@
                     <el-col :span="12">
                         <el-form-item label="日期选择器">
                             <el-date-picker
-                                @change="_getPursporadicList()"
+                                @change="_resetPursporadicList()"
                                 clearable
                                 v-model="searchForm.createTime"
                                 value-format="yyyy-MM-dd HH:mm:ss"
@@ -54,8 +54,9 @@
                 @handleExport="handleExport"
                 ></button-component2>
                 <el-table
+                    class="maintainConTable"
                     :data="tableData"
-                    ref="multipleTable"
+                    ref="maintainConTable"
                     @selection-change="handleSelectionChange"
                     border
                     style="width: 100%">
@@ -82,6 +83,9 @@
                     label="单据编号"
                     show-overflow-tooltip
                     width="140">
+                    <template slot-scope="scope">
+                        <span style="color:#3e75ff" @click="handleInfo(scope.row)">{{scope.row.docNo}}</span>
+                    </template>
                     </el-table-column>
                     <el-table-column
                     prop="projectName"
@@ -132,26 +136,37 @@
                     </template>
                     </el-table-column>
                 </el-table>
-           
+                <pagination ref="page" :total="total" :pageSize="pageSize" @sentPages="sentPages"></pagination>
         </div>
+        <el-dialog title="收货地址" :visible.sync="dialogProcessWindowVisible">
+            <process-window @isCancle="isCancle" @isSubmit="isSubmit"></process-window>
+            <!-- <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            </div> -->
+        </el-dialog>
+        
     </div>
 </template>
 
 <script>
-    import {getMenuProjectsList,getPursporadicList,deletePursporadic} from 'api/procurementPlan'
+    import {getMenuProjectsList,getPursporadicList,deletePursporadic,getPursporadicSubmitinf} from 'api/procurementPlan'
     import {dataDictionary,closeRoute,freshRouter} from 'mixins'
     import buttonComponent2 from 'components/buttonComponent/buttonComponent2'
+    import Pagination from 'components/Pagination/Pagination'
+    import ProcessWindow from 'components/processWindow/processWindow'
     export default {
         name:'sporadicPurchase',
         mixins:[dataDictionary,closeRoute,freshRouter],
         components:{
-            buttonComponent2
+            buttonComponent2,Pagination,ProcessWindow
         },
         data(){
             return{
                 projectsList:[],
                 selectArr:['flowStatus'],
                 tableData:[],
+                total:0,
                 searchForm:{
                     createTime:null,
                     createTimeFrom:'',
@@ -164,8 +179,9 @@
                     
                 },
                 pageNo:1,
-                pageSize:9,
-                searchMoreFlag:false
+                pageSize:2,
+                searchMoreFlag:false,
+                dialogProcessWindowVisible:false,
                 
             }
         },
@@ -197,6 +213,7 @@
                     if(res.status===0){
                         if(res.results){
                              this.tableData = res.results.purSporadicDto || []
+                             this.total = res.results.total
                         }else{
                             this.tableData = []
                         }
@@ -206,6 +223,15 @@
                     }
                     
                 })
+            },
+            //重置页码
+            _resetPursporadicList(){
+                this.$refs.page.setCurrentPage()
+            },
+            //切换页码
+            sentPages(val){
+                this.pageNo = val
+                this._getPursporadicList()
             },
             //高级搜索
             searchMore(){
@@ -233,8 +259,36 @@
                 this.changeRouter(row.id, 'info', 'sporadicPurchaseSet');
             },
             // 提交流程
-            handleSubmissionProcess(){
+            handleSubmissionProcess(row){
+                if(!this.selectionList.length){
+                    this.$message({
+                        message: '请您先选中想要提交流程的一行数据',
+                        type: 'warning'
+                    });
+                    return
+                }
+                if (!this.judgeIsOneself(row)) {
+                    this.editErrorTips('流程提交');
+                    return
+                }
+                
+                getPursporadicSubmitinf(row.id,row.projectId).then(res=>{
+                    if(res.status === 0){
+                        if(!res.results.workflowNextNodes){
 
+                        }
+                    }
+                })
+
+            },
+            //暂不提交
+            isCancle(){
+                this.dialogProcessWindowVisible = false
+            },
+            //确认提交
+            isSubmit(){
+                
+                this.dialogProcessWindowVisible = false
             },
             //流程监控
             handleProcessMonitoring() {

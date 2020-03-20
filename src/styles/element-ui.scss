@@ -849,4 +849,15 @@
   .el-date-editor{
     width: 100%;
   }
+  .maintainConTable{
+    .el-table__header{
+      thead{
+        .el-checkbox__input{
+          display: none;
+        }
+      }
+      
+      
+    }
+  }
 }
