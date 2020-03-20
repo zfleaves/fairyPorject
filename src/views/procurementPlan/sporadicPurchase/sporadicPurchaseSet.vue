@@ -138,7 +138,7 @@
                                 </el-input>
                                  <span v-else>{{scope.row.materialName}}</span>
                             </el-form-item>
-                           
+
                         </template>
                     </el-table-column>
                     <el-table-column prop="stands" label="规格" width="80" show-overflow-tooltip>
@@ -181,7 +181,7 @@
                                 </el-number>
                                  <span v-else>{{scope.row.sporadicNum}}</span>
                             </el-form-item>
-                       
+
                         </template>
                     </el-table-column>
                     <el-table-column prop="sporadicPrice" label="单价(元)">
@@ -250,11 +250,11 @@ export default {
                     if (isNaN(value)) {
                         this.projectForm.sporadicAmount = 0
                     } else {
-                
+
                     callback();
                     }
                 }
-                
+
             };
         return{
             labelPosition:'right',
@@ -273,7 +273,7 @@ export default {
                 updateBy: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).userId : '',
                 docNo:''
             },
-           
+
 
 
             rules: {
@@ -310,9 +310,9 @@ export default {
                 },
                 tableData:[]
             },
-            
+
             pursporadicProjectsList:[],
-            
+
             flowStatus:false,
             selectTableList:[],
             id:'',
@@ -322,7 +322,7 @@ export default {
         }
     },
     created(){
-        let params =   this.$route.params 
+        let params =   this.$route.params
         this.id=Base64.decode(params.id);
         this.type=Base64.decode(params.type);
     },
@@ -346,7 +346,7 @@ export default {
         //             cancelButtonText: '取消',
         //             type: 'warning'
         //         }).then(() => {
-                  
+
         //           this.projectForm.projectId = val
         //           this.getPmName()
         //         }).catch((e) => {
@@ -370,7 +370,7 @@ export default {
             //         cancelButtonText: '取消',
             //         type: 'warning'
             //     }).then(() => {
-                  
+
             //       this.projectForm.projectId = q
             //       this.getPmName()
             //     }).catch((e) => {
@@ -486,15 +486,15 @@ export default {
                             return
                         }
                     })
-                  
+
                 } else {
                     console.log('error submit!!');
                     return false;
                 }
             });
-            
-          
-         
+
+
+
         },
         //取消保存
         cancelProjectFrom(){
@@ -507,7 +507,7 @@ export default {
         }).catch((e) => {
            return
         });
-            
+
         },
         //选择明细表格数据
         handleSelectionChange1(val) {
