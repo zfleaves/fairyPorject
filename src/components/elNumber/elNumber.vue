@@ -111,10 +111,11 @@
       value: {
         immediate: true,//立即执行
         handler(value) {
-          let newVal = value === undefined || value === '' ? value : Number(value);
+          value = value === null || value === undefined ? '' : value ;
+          let newVal =  value === '' ? value : Number(value);
           if (newVal !== undefined || newVal !== '') {
             if (isNaN(newVal) || newVal === '') {
-              return newVal === 0 ? 0 : '';
+              this.$emit('input', newVal === 0 ? 0 : '');
             }
             if (this.precision !== undefined && newVal !== '') {
               newVal = this.toPrecision(newVal, this.precision);
@@ -227,7 +228,7 @@
           newVal = this.toPrecision(newVal, this.precision);
         }
         if (newVal >= this.max) newVal = this.max;
-        if (newVal <= this.min) newVal = this.min;
+        if (newVal <= this.min && newVal !== '') newVal = this.min;
         if (oldVal === newVal) return;
         this.userInput = null;
         this.$emit('input', newVal);
@@ -238,7 +239,7 @@
         this.userInput = value;
       },
       handleInputChange(value) {
-        const newVal = value === '' ? undefined : Number(value);
+        const newVal = value === '' ? '' : Number(value);
         if (!isNaN(newVal) || value === '') {
           this.setCurrentValue(newVal);
         }
