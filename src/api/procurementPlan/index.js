@@ -99,3 +99,10 @@ export function getPursporadicSubmitinf(sid,projectId){
         }
     })
 }
+export function submitPursporadic(data){
+    return request({
+        url:'/contract/pursporadic/submit',
+        method:'put',
+        data
+    })
+}

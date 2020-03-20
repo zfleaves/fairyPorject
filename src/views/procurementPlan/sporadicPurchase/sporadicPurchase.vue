@@ -138,7 +138,7 @@
                 </el-table>
                 <pagination ref="page" :total="total" :pageSize="pageSize" @sentPages="sentPages"></pagination>
         </div>
-        <el-dialog title="收货地址" :visible.sync="dialogProcessWindowVisible">
+        <el-dialog center title="零星采购审批流程提交" :visible.sync="dialogProcessWindowVisible">
             <process-window @isCancle="isCancle" @isSubmit="isSubmit"></process-window>
             <!-- <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -150,7 +150,8 @@
 </template>
 
 <script>
-    import {getMenuProjectsList,getPursporadicList,deletePursporadic,getPursporadicSubmitinf} from 'api/procurementPlan'
+    import {getMenuProjectsList,getPursporadicList,
+    deletePursporadic,getPursporadicSubmitinf,submitPursporadic} from 'api/procurementPlan'
     import {dataDictionary,closeRoute,freshRouter} from 'mixins'
     import buttonComponent2 from 'components/buttonComponent/buttonComponent2'
     import Pagination from 'components/Pagination/Pagination'
@@ -259,7 +260,8 @@
                 this.changeRouter(row.id, 'info', 'sporadicPurchaseSet');
             },
             // 提交流程
-            handleSubmissionProcess(row){
+            handleSubmissionProcess(){
+                // console.log(row)
                 if(!this.selectionList.length){
                     this.$message({
                         message: '请您先选中想要提交流程的一行数据',
@@ -267,15 +269,15 @@
                     });
                     return
                 }
-                if (!this.judgeIsOneself(row)) {
+                if (!this.judgeIsOneself(this.selectionList[0])) {
                     this.editErrorTips('流程提交');
                     return
                 }
                 
-                getPursporadicSubmitinf(row.id,row.projectId).then(res=>{
+                getPursporadicSubmitinf(this.selectionList[0].id,this.selectionList[0].projectId).then(res=>{
                     if(res.status === 0){
                         if(!res.results.workflowNextNodes){
-
+                            this.dialogProcessWindowVisible = true
                         }
                     }
                 })
@@ -287,7 +289,17 @@
             },
             //确认提交
             isSubmit(){
-                
+                let data = {
+                    // modeName: "零星采购登记"
+                    // projectId: 412
+                    // sid: 41
+                    // taskId: null
+                    // taskName: "中建君联-零星采购登记"
+                    // workflowNextNodes: null
+                }
+                submitPursporadic().then(res=>{
+
+                })
                 this.dialogProcessWindowVisible = false
             },
             //流程监控
