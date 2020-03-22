@@ -76,7 +76,7 @@
                         </uploadFile> -->
                         <span :disabled="flowStatus" v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
                         <el-button :disabled="flowStatus" @click="elUpload" type="text" size="small">上传</el-button>
-                        <el-button :disabled="flowStatus" v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
+                        <el-button @click="elUpload" v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -233,7 +233,7 @@
             </div>
         </div>
         <el-dialog width="80%" center title="上传" :visible.sync="elUploadDialog">
-            <upload @attachment="getAttachment"></upload>
+            <upload :isClick="flowStatus" @attachment="getAttachment" :filepathList="filepathList"></upload>
         </el-dialog>
     </div>
 </template>
@@ -344,6 +344,7 @@ export default {
         //上传
         elUpload(){
             this.elUploadDialog = true
+
         },
         //活动上传文件id字符串
         getAttachment(val){
@@ -416,13 +417,14 @@ export default {
         },
         //获取上传文件
         _getFilepathList(){
-            let fileIds = []
-            fileIds.push(this.projectForm.attachmentId)
+           
+            let fileIds = this.projectForm.attachmentId.split(',')
             let data = {
                 fileIds:fileIds
             }
             getFilepathList(data).then(res=>{
                 this.filepathList = res.results
+                
             })
         },
         // 保存数据

@@ -3,6 +3,7 @@
         <div class="uploadTitle">
             <div class="title">
                 <el-upload
+                    :disabled="isClick"
                     class="upload-demo"
                     :action="httpUrls"
                     :headers='headers'
@@ -20,16 +21,17 @@
                 </el-upload>
                 <i @click="handleClickCaret" :class="caretFlag ? 'el-icon-caret-top' : 'el-icon-caret-bottom'"></i>
             </div>
-            <div class="num">已成功上传<span>{{imgUrlList.length}}</span>个附件，共<span>{{totalSize}}</span></div>
+            <div class="num">已成功上传<span>{{newfilepathList.length}}</span>个附件，共<span>{{totalSize}}</span></div>
         </div>
         <div v-if="!caretFlag" class="fileCon">
-            <div v-for="item in imgUrlList" :key="item.id" class="fileList">
+            <div v-for="item in newfilepathList" :key="item.id" class="fileList">
                 <div class="imgCon">
                    <span class="icon iconfont" :class="setClass(item.fileName)"></span>
                 </div>
                 <div class="title">
                     <p>{{item.fileName}}</p>
-                    <p>{{item.fileSize}}KB</p>
+                    <p>{{formatFileSize2(item.fileSize)}}</p>
+                    <div class="suspension"></div>
                 </div>
             </div>
         </div>
@@ -52,14 +54,32 @@ export default {
                 'userId':JSON.parse(Auth.hasUserInfo()) ? `${JSON.parse(Auth.hasUserInfo()).userId}` : ''
             },
             caretFlag:false,
-            totalSize:0
+            totalSize:0,
+            newfilepathList:[]
         }
+    },
+    props:{
+        filepathList:{
+            type:Array,
+            default:()=>[]
+        },
+        isClick:{
+            type:Boolean,
+            default:false
+        },
+    },
+    created(){
+        
+    },
+    mounted(){
+        this.newfilepathList = JSON.parse(JSON.stringify(this.filepathList))
+        this.total()
     },
     methods:{
         total(){
             let sum = 0;
-            for(let i in this.imgUrlList){
-                let item = this.imgUrlList[i]
+            for(let i in this.newfilepathList){
+                let item = this.newfilepathList[i]
                 sum += item.fileSize
             }
             this.formatFileSize(sum)
@@ -82,29 +102,48 @@ export default {
             this.totalSize = 0
             return
         },
+         formatFileSize2(size) {
+            let value = Number(size);
+            if (size && !isNaN(value)) {
+                const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'BB'];
+                let index = 0;
+                let k = value;
+                if (value >= 1024) {
+                    while (k > 1024) {
+                        k = k / 1024;
+                        index++;
+                    }
+                }
+                
+                return `${(k).toFixed(2)}${units[index]}`
+            }
+            
+            return '0'
+        },
         //点击展开箭头
         handleClickCaret(){
             this.caretFlag = !this.caretFlag
         },
         //判断是什么类型的文件
-
         setClass(val){
-            let filePath = val.split(".");
-            let fileType =filePath[filePath.length - 1]
-            fileType.toLowerCase()
-            if(fileType === 'txt'){
-                return 'iconTXTtubiao'
-            }else if(fileType === 'ppt'){
-                return 'iconppt'
-            }else if(fileType === 'rar'){
-                return 'iconrar'
-            }else if(fileType === 'doc' || fileType === 'docx'){
-                return 'iconword'
-            }else if(fileType === 'xls' || fileType === 'xlsx'){
-                return 'iconexcel'
-            }else{
-                return ''
-            }
+            if(val){
+                let filePath =val.split(".");
+                let fileType =filePath[filePath.length - 1]
+                fileType.toLowerCase()
+                if(fileType === 'txt'){
+                    return 'iconTXTtubiao'
+                }else if(fileType === 'ppt'){
+                    return 'iconppt'
+                }else if(fileType === 'rar'){
+                    return 'iconrar'
+                }else if(fileType === 'doc' || fileType === 'docx'){
+                    return 'iconword'
+                }else if(fileType === 'xls' || fileType === 'xlsx'){
+                    return 'iconexcel'
+                }else{
+                    return ''
+                }
+            } 
         },
         handleRemove(file, fileList) {
         console.log(file, fileList);
@@ -144,8 +183,12 @@ export default {
                 item.id = item.response.results
             }
             })
-            this.imgUrlList = fileList.reverse();
-            let arr = this.imgUrlList.map(v => v.id);
+            
+            this.newfilepathList = this.newfilepathList.concat(fileList).reverse();
+            this.newfilepathList = [...new Set(this.newfilepathList)]
+            
+            let arr = this.newfilepathList.map(v => v.id);
+
             this.$emit('attachment', arr.join(','));
             this.$message.success('文件上传成功');
             this.total()
@@ -216,6 +259,16 @@ export default {
                 flex-direction: column;
                 padding-left: 10px;
                 background: #fafafa;
+                position: relative;
+                
+                .suspension{
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(1,1,1,.5);
+                }
 
                 p{
                     flex: 1;
