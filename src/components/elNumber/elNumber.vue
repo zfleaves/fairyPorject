@@ -111,11 +111,10 @@
       value: {
         immediate: true,//立即执行
         handler(value) {
-          value = value === null || value === undefined ? '' : value ;
-          let newVal =  value === '' ? value : Number(value);
+          let newVal = value === undefined || value === '' ? value : Number(value);
           if (newVal !== undefined || newVal !== '') {
             if (isNaN(newVal) || newVal === '') {
-              this.$emit('input', newVal === 0 ? 0 : '');
+              return newVal === 0 ? 0 : '';
             }
             if (this.precision !== undefined && newVal !== '') {
               newVal = this.toPrecision(newVal, this.precision);
