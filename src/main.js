@@ -20,6 +20,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'styles/index.scss'
 import '@/promission' //这里进行路由后台获取的模拟
 import '../static/icon/iconfont.css'
+import '../static/font/iconfont.css'
 import filters from './filters'
 
 const Base64 = require('js-base64').Base64;
