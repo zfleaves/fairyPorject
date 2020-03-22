@@ -131,8 +131,9 @@
                     label="操作"
                     width="160">
                     <template slot-scope="scope">
-                        <el-button @click="handleClickEdit(scope.row)" type="text" size="small">修改</el-button>
-                        <el-button @click="handleClickDelet(scope.row)" type="text" size="small">删除</el-button>
+                        <el-button @click="handleClickEdit(scope.row)" :disabled="scope.row.flowStatus!=='0'" type="text" size="small">修改</el-button>
+                        <el-button @click="handleClickDelet(scope.row)" :disabled="scope.row.flowStatus!=='0'" type="text" size="small">删除</el-button>
+                       
                     </template>
                     </el-table-column>
                 </el-table>
@@ -140,11 +141,11 @@
         </div>
         <el-dialog center title="零星采购审批流程提交" :visible.sync="dialogProcessWindowVisible">
             <process-window @isCancle="isCancle" @isSubmit="isSubmit"></process-window>
-            <!-- <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-            </div> -->
         </el-dialog>
+        <el-dialog center title="零星采购审批流程提交" :visible.sync="dialogProcessWindowdetailVisible">
+            <process-window-detail :sid="sid" :projectId="projectId" :processObj="submitinf" @isCancle="isCancle" @isSubmit="isSubmit"></process-window-detail>
+        </el-dialog>
+        
         
     </div>
 </template>
@@ -156,11 +157,12 @@
     import buttonComponent2 from 'components/buttonComponent/buttonComponent2'
     import Pagination from 'components/Pagination/Pagination'
     import ProcessWindow from 'components/processWindow/processWindow'
+    import processWindowDetail from 'components/processWindow/processWindow_detail'
     export default {
         name:'sporadicPurchase',
         mixins:[dataDictionary,closeRoute,freshRouter],
         components:{
-            buttonComponent2,Pagination,ProcessWindow
+            buttonComponent2,Pagination,ProcessWindow,processWindowDetail
         },
         data(){
             return{
@@ -180,9 +182,13 @@
                     
                 },
                 pageNo:1,
-                pageSize:2,
+                pageSize:9,
                 searchMoreFlag:false,
                 dialogProcessWindowVisible:false,
+                submitinf:{},
+                dialogProcessWindowdetailVisible:false,
+                sid:'',
+                projectId:''
                 
             }
         },
@@ -273,11 +279,17 @@
                     this.editErrorTips('流程提交');
                     return
                 }
+                this.sid= this.selectionList[0].id
+                this.projectId= this.selectionList[0].projectId
                 
-                getPursporadicSubmitinf(this.selectionList[0].id,this.selectionList[0].projectId).then(res=>{
+                getPursporadicSubmitinf(this.sid,this.projectId).then(res=>{
                     if(res.status === 0){
+                        this.submitinf = res.results
                         if(!res.results.workflowNextNodes){
                             this.dialogProcessWindowVisible = true
+                        }else{
+                            this.dialogProcessWindowdetailVisible = true
+                            
                         }
                     }
                 })
@@ -285,26 +297,49 @@
             },
             //暂不提交
             isCancle(){
-                this.dialogProcessWindowVisible = false
+                if(this.dialogProcessWindowVisible){
+                     this.dialogProcessWindowVisible = false
+                }else{
+                     this.dialogProcessWindowdetailVisible = false
+                }
+               
             },
             //确认提交
-            isSubmit(){
-                let data = {
-                    // modeName: "零星采购登记"
-                    // projectId: 412
-                    // sid: 41
-                    // taskId: null
-                    // taskName: "中建君联-零星采购登记"
-                    // workflowNextNodes: null
-                }
-                submitPursporadic().then(res=>{
+            isSubmit(val){
+                let data = {}
+                    if(this.dialogProcessWindowVisible){
+                        data = {
+                        ...this.submitinf  
+                        }
+                         this.dialogProcessWindowVisible = false
+                    }else{
+                        data = val
+                        this.dialogProcessWindowdetailVisible = false
+                    }
 
-                })
-                this.dialogProcessWindowVisible = false
+                submitPursporadic(data).then(res=>{
+                        if(res.status === 0){
+                            this._getPursporadicList()
+                        }
+                    })  
             },
             //流程监控
             handleProcessMonitoring() {
-               
+                if(!this.selectionList.length){
+                    this.$message({
+                        message: '请您先选中想要提交流程的一行数据',
+                        type: 'warning'
+                    });
+                    return
+                }
+               if(!this.selectionList[0].taskId){
+                   this.$message({
+                        message: '本数据提交时未启用流程审批，无审批记录.',
+                        type: 'warning'
+                    });
+                    return
+                   
+               }
             },
             //打印
             handlePrint(){

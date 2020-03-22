@@ -75,7 +75,7 @@
                             :attachment="projectForm.attachmentId">
                         </uploadFile> -->
                         <span :disabled="flowStatus" v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
-                        <el-button :disabled="flowStatus"  type="text" size="small">上传</el-button>
+                        <el-button :disabled="flowStatus" @click="elUpload" type="text" size="small">上传</el-button>
                         <el-button :disabled="flowStatus" v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
@@ -232,6 +232,9 @@
                 </el-form>
             </div>
         </div>
+        <el-dialog width="80%" center title="上传" :visible.sync="elUploadDialog">
+            <upload @attachment="getAttachment"></upload>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -239,9 +242,13 @@ import {getPursporadicProjectsList,savePursporadicList,getPursporadicInf,getPurs
 import {dataDictionary,closeRoute,freshRouter} from 'mixins'
 import Auth from 'util/auth'
 import {formatYear} from 'util';
+import Upload from 'components/upload/upload'
 export default {
     name:'sporadicPurchaseSet',
     mixins:[dataDictionary,closeRoute,freshRouter],
+    components:{
+        Upload
+    },
     data(){
             var changeSporadicAmount = (rule, value, callback) => {
                 if (!value) {
@@ -273,9 +280,6 @@ export default {
                 updateBy: Auth.hasUserInfo() ? JSON.parse(Auth.hasUserInfo()).userId : '',
                 docNo:''
             },
-
-
-
             rules: {
                     projectId: [
                         {required: true, message: '请选择项目名称', trigger: 'change'}
@@ -310,15 +314,14 @@ export default {
                 },
                 tableData:[]
             },
-
             pursporadicProjectsList:[],
-
             flowStatus:false,
             selectTableList:[],
             id:'',
             type:'',
-            filepathList:[]
-
+            filepathList:[],
+            cloneProjectId:'',
+            elUploadDialog:false
         }
     },
     created(){
@@ -337,46 +340,33 @@ export default {
             this._getPursporadicDetailList()
         }
     },
-    watch:{
-        // "projectForm.projectId":{
-        //     handler(val, oldVal){
-        //      if(val !== oldVal){
-        //           this.$confirm(`您将更改项目名称，是否继续`, '确定', {
-        //             confirmButtonText: '确定',
-        //             cancelButtonText: '取消',
-        //             type: 'warning'
-        //         }).then(() => {
-
-        //           this.projectForm.projectId = val
-        //           this.getPmName()
-        //         }).catch((e) => {
-        //             this.projectForm.projectId = ''
-        //             return
-        //         });
-        //      }
-        //     },
-        //     deep:true
-        // }
-    },
     methods:{
+        //上传
+        elUpload(){
+            this.elUploadDialog = true
+        },
+        //活动上传文件id字符串
+        getAttachment(val){
+            this.projectForm.attachmentId = val
+        },
         //切换项目
         changeSelectProject(q){
-            console.log(q)
-            console.log(this.projectForm.projectId)
-            // let this.projectForm.projectId
-            // if(q === )
-            //  this.$confirm(`您将更改项目名称，是否继续`, '确定', {
-            //         confirmButtonText: '确定',
-            //         cancelButtonText: '取消',
-            //         type: 'warning'
-            //     }).then(() => {
-
-            //       this.projectForm.projectId = q
-            //       this.getPmName()
-            //     }).catch((e) => {
-            //         this.projectForm.projectId = this.projectForm.projectId
-            //         return
-            //     });
+            if( this.cloneProjectId  && this.model.tableData.length){
+                this.$confirm(`您将更改项目名称，是否继续`, '确定', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.cloneProjectId = q
+                    this.getPmName()
+                }).catch((e) => {
+                    this.projectForm.projectId = this.cloneProjectId
+                    return
+                });
+            }else{
+                this.cloneProjectId = this.projectForm.projectId
+            }
+             
         },
         //获得对应pmname
         getPmName(){
@@ -408,6 +398,7 @@ export default {
                     this.projectForm.attachmentId =  res.results.attachmentId
                     this.projectForm.remarks =  res.results.remarks
                     this.projectForm.inandoutTime =  formatYear(res.results.createTime)
+                    this.cloneProjectId = res.results.projectId
                     // console.log(this.projectForm.createTime)
                     // formatYear(res.results.createTime)
                     this._getFilepathList()
@@ -423,7 +414,7 @@ export default {
                 }
             })
         },
-        //
+        //获取上传文件
         _getFilepathList(){
             let fileIds = []
             fileIds.push(this.projectForm.attachmentId)

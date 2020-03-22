@@ -860,4 +860,10 @@
       
     }
   }
+  .el-upload-list{
+    display: none;
+  }
+  .el-dialog__body{
+    min-height: 50vh;
+  }
 }

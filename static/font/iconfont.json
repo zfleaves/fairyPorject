@@ -1,0 +1,44 @@
+{
+  "id": "1319654",
+  "name": "travel",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "travel项目图标",
+  "glyphs": [
+    {
+      "icon_id": "312548",
+      "name": "rar",
+      "font_class": "rar",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "2295972",
+      "name": "ppt",
+      "font_class": "ppt",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "2295980",
+      "name": "word",
+      "font_class": "word",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "2296006",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "6233095",
+      "name": "TXT图标",
+      "font_class": "TXTtubiao",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    }
+  ]
+}
