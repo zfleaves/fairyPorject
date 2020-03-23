@@ -76,7 +76,7 @@
                         </uploadFile> -->
                         <span :disabled="flowStatus" v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
                         <el-button :disabled="flowStatus" @click="elUpload" type="text" size="small">上传</el-button>
-                        <el-button @click="elUpload" v-if="filepathList.length" type="text" size="small">查看<span>({{filepathList.length}})</span></el-button>
+                        <el-button @click="elUpload" v-if="filepathList.length" type="text" size="small">查看<span>({{length ? length : filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -321,7 +321,8 @@ export default {
             type:'',
             filepathList:[],
             cloneProjectId:'',
-            elUploadDialog:false
+            elUploadDialog:false,
+            length:0
         }
     },
     created(){
@@ -349,6 +350,7 @@ export default {
         //活动上传文件id字符串
         getAttachment(val){
             this.projectForm.attachmentId = val
+            this.length = val.split(',').length
         },
         //切换项目
         changeSelectProject(q){
@@ -366,6 +368,7 @@ export default {
                 });
             }else{
                 this.cloneProjectId = this.projectForm.projectId
+                this.getPmName()
             }
              
         },

@@ -17,7 +17,7 @@
                     :limit="10"
                     :on-exceed="handleExceed"
                     :before-upload="beforeAvatarUpload"
-                    :file-list="imgUrlList">添加附件
+                    :file-list="newfilepathList">添加附件
                 </el-upload>
                 <i @click="handleClickCaret" :class="caretFlag ? 'el-icon-caret-top' : 'el-icon-caret-bottom'"></i>
             </div>
@@ -29,9 +29,13 @@
                    <span class="icon iconfont" :class="setClass(item.fileName)"></span>
                 </div>
                 <div class="title">
-                    <p>{{item.fileName}}</p>
+                    <p>{{fileNameFilter(item.fileName)}}</p>
                     <p>{{formatFileSize2(item.fileSize)}}</p>
-                    <div class="suspension"></div>
+                    <div class="suspension">
+                        <i @click="iconView(item)" class="el-icon-view"></i>
+                        <i @click="iconDownload(item)" class="el-icon-download"></i>
+                        <i @click="iconDelete(item)" class="el-icon-close"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,6 +43,7 @@
     </div>
 </template>
 <script>
+import {downloadFile} from 'api/companyProject/projectMembers'
 import httpUrl from 'util/config'
 import Auth from 'util/auth'
 export default {
@@ -183,10 +188,7 @@ export default {
                 item.id = item.response.results
             }
             })
-            
-            this.newfilepathList = this.newfilepathList.concat(fileList).reverse();
-            this.newfilepathList = [...new Set(this.newfilepathList)]
-            
+            this.newfilepathList = fileList
             let arr = this.newfilepathList.map(v => v.id);
 
             this.$emit('attachment', arr.join(','));
@@ -198,7 +200,40 @@ export default {
         handleError(err, file, fileList) {
             this.$message.error('文件上传失败');
             // this.uploadTitle = '点击上传';
-        }
+        },
+        // 下载
+        iconDownload(item){
+            let fileName = item.fileName;
+            downloadFile(item.id).then(res => {
+                let url = window.URL.createObjectURL(new Blob([res]));
+                let link = document.createElement('a');
+                link.style.display = 'none';
+                link.href = url;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click()
+            }).catch(e => {
+                // console.log(e)
+            })
+        },
+        //删除
+        iconDelete(item){
+          let index = this.newfilepathList.findIndex(v=>v.id===item.id)
+          if(index>=0){
+              this.newfilepathList.splice(index,1)
+              this.total()
+          }
+          let arr = this.newfilepathList.map(v => v.id);
+          this.$emit('attachment', arr.join(','));
+        },
+        // 预览
+        iconView(item){
+            window.open(`static/fileView.html?fileId=${item.id}`)
+        },
+        fileNameFilter(val) {
+            return val ? val.substr(0, val.lastIndexOf('_')) : ''
+        },
+
     }
 }
 </script>
@@ -260,15 +295,39 @@ export default {
                 padding-left: 10px;
                 background: #fafafa;
                 position: relative;
-                
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                p{
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                &:hover{
+                    .suspension{
+                    opacity: 1;
+                    }
+                }
                 .suspension{
                     position: absolute;
                     left: 0;
                     top: 0;
                     right: 0;
                     bottom: 0;
-                    background: rgba(1,1,1,.5);
-                }
+                    background: rgba(1,1,1,.7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    opacity: 0;
+                    i{
+                        justify-content: space-between;
+                        color: #fff;
+                        margin-left: 5px;
+                        font-size: 25px;
+                        }
+                    }
+                
+                
 
                 p{
                     flex: 1;

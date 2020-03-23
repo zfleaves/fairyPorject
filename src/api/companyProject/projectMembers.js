@@ -96,4 +96,14 @@ export function createUserProject(data){
     })
 }
 
-
+//下载
+export function downloadFile(fileId) {
+    return request({
+      url: '/sysbase/confiles/download',
+      method: 'get',
+      responseType: 'arraybuffer',  // 加了这个后 下载的文件不会乱码
+      params: {
+        fileId
+      }
+    })
+  }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href=""/>
+  <title>工程物资云-文件预览_中建君联</title>
+
+  <meta name="keywords"
+        content="工程物资云，中建君联，登录物资云,物资云登录,物资云登录,中建君联登录,物资云注册,物资云,物资管理软件,物资管理系统,材料管理软件,材料管理系统,仓库管理系统,仓库管理软件"/>
+  <meta name="description"
+        content="欢迎登录工程物资云。一秒注册，永久免费使用。专业工程物资管理系统/建筑材料管理软件，致力于服务施工企业提供高效率、低成本、安全可靠的数字化转型与信息化解决方案。包括项目物资需求计划、采购管理、合同管理、仓库管理、统计分析等业务"/>
+
+  <style>
+    body, html {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="file" style="width: 100%;height: 100%;">
+
+</div>
+
+<script>
+  // import config from '../src/util/config'
+  // const base_url = config.url;
+  const base_url = "http://47.99.192.245:8087";
+  // const base_url = process.env.BASE_API;
+  // const base_url = 'https://api.junnysoft.cn';
+
+
+  function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+  }
+
+  var fileId = getQueryString('fileId');
+
+  var url = base_url + '/sysbase/api/confiles/view?fileId=' + fileId;
+  var str = "<iframe src=" + url + " frameborder=\"0\" style=\"width: 100%;height: 100%;\"></iframe>";
+  document.getElementById('file').innerHTML = str;
+  // window.open(url);
+</script>
+</body>
+</html>
