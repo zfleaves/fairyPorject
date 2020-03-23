@@ -874,3 +874,26 @@
     }
   } 
 }
+
+
+.budgetDetailed{
+  .searchCon{
+    .el-form-item{
+      margin-bottom: 5px;
+    }
+    .el-input__inner{
+      height: 35px;
+    }
+    button{
+      height: 40px;
+      width: 100px;
+      padding: 0;
+    }
+  }
+ .el-table__footer{
+   td{
+     color: red;
+   }
+ }
+  
+}
