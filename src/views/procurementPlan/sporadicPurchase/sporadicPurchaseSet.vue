@@ -76,7 +76,7 @@
                         </uploadFile> -->
                         <span :disabled="flowStatus" v-if="filepathList.length">{{filepathList[0].fileName.split('_')[0]}}</span>
                         <el-button :disabled="flowStatus" @click="elUpload" type="text" size="small">上传</el-button>
-                        <el-button @click="elUpload" v-if="filepathList.length" type="text" size="small">查看<span>({{length ? length : filepathList.length}})</span></el-button>
+                        <el-button @click="elUpload" v-if="length || filepathList.length" type="text" size="small">查看<span>({{length ? length : filepathList.length}})</span></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -361,6 +361,7 @@ export default {
                     type: 'warning'
                 }).then(() => {
                     this.cloneProjectId = q
+                    this.model.tableData = []
                     this.getPmName()
                 }).catch((e) => {
                     this.projectForm.projectId = this.cloneProjectId

@@ -17,7 +17,7 @@
                     :limit="10"
                     :on-exceed="handleExceed"
                     :before-upload="beforeAvatarUpload"
-                    :file-list="newfilepathList">添加附件
+                    :file-list="newfilepathList">{{uploadTitle}}
                 </el-upload>
                 <i @click="handleClickCaret" :class="caretFlag ? 'el-icon-caret-top' : 'el-icon-caret-bottom'"></i>
             </div>
@@ -60,7 +60,8 @@ export default {
             },
             caretFlag:false,
             totalSize:0,
-            newfilepathList:[]
+            newfilepathList:[],
+            uploadTitle:"上传文件"
         }
     },
     props:{
@@ -164,6 +165,7 @@ export default {
         },
         // 文件上传之前
         beforeAvatarUpload(file) {
+            this.uploadTitle = "上传文件中..."
             console.log(file);
             // const isJPG = file.type === 'image/jpeg';
             const isLt2M = file.size / 1024 / 1024 < 5;
@@ -176,7 +178,7 @@ export default {
         },
         //文件上传成功
         handleSuccess(response, file, fileList) {
-
+            
             console.log(response);
             console.log(file);
              console.log(fileList);
@@ -194,12 +196,12 @@ export default {
             this.$emit('attachment', arr.join(','));
             this.$message.success('文件上传成功');
             this.total()
-            // this.uploadTitle = '点击上传';
+            this.uploadTitle = '点击上传';
         },
         //文件上传失败
         handleError(err, file, fileList) {
             this.$message.error('文件上传失败');
-            // this.uploadTitle = '点击上传';
+            this.uploadTitle = '点击上传';
         },
         // 下载
         iconDownload(item){
@@ -218,20 +220,30 @@ export default {
         },
         //删除
         iconDelete(item){
-          let index = this.newfilepathList.findIndex(v=>v.id===item.id)
-          if(index>=0){
-              this.newfilepathList.splice(index,1)
-              this.total()
-          }
-          let arr = this.newfilepathList.map(v => v.id);
-          this.$emit('attachment', arr.join(','));
+             this.$confirm(`确定删除吗`, '确定', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let index = this.newfilepathList.findIndex(v=>v.id===item.id)
+                    if(index>=0){
+                        this.newfilepathList.splice(index,1)
+                        this.total()
+                    }
+                    let arr = this.newfilepathList.map(v => v.id);
+                    this.$emit('attachment', arr.join(','));
+                }).catch((e) => {
+                    this.$message.error('取消删除');
+                    return
+                });
+          
         },
         // 预览
         iconView(item){
             window.open(`static/fileView.html?fileId=${item.id}`)
         },
         fileNameFilter(val) {
-            return val ? val.substr(0, val.lastIndexOf('_')) : ''
+            return val ? val.substr(0, val.lastIndexOf('.')) : ''
         },
 
     }
