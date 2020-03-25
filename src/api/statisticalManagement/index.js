@@ -26,3 +26,12 @@ export function getDetailAnalysis(data){
     })
 }
 
+//生成报表
+export function getReportWarWarDetail(data){
+    return request({
+        url:'/contract/reportWar/warDetail',
+        method:'post',
+        data
+        
+    })
+}
