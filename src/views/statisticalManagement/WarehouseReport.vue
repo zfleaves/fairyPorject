@@ -106,80 +106,75 @@
               </el-col>
             </el-row>
           </el-form>
-          <el-table
-            v-if="summariesFlag"
-            :span-method="objectSpanMethod"
-            :summary-method="getSummaries"
-            :show-summary="reportWarWarDetail.length>=0"
-            :data="reportWarWarDetail"
-            id="tableId"
-            style="width: 100%"
-            >
-            <el-table-column type="index" label="序号" fixed width="60"></el-table-column>
-            <el-table-column
-              v-for="item in fixedHeaderTitleClone"
-              :key="item.id"
-              :prop="item.prop"
-              :label="item.label"
-              show-overflow-tooltip
-            ></el-table-column>
-            <el-table-column
-              v-for="childs in dynamicHeaderTitle"
-              :key="childs.id"
-              :label="childs.label"
-              :prop="childs.prop"
-              show-overflow-tooltip
-            >
+          <div v-if="rightFlag">
+            <el-table
+              v-if="summariesFlag"
+              :summary-method="getSummaries"
+              :show-summary="reportWarWarDetail.length>=0"
+              :data="reportWarWarDetail"
+              id="tableId"
+              style="width: 100%"
+              >
+              <el-table-column type="index" label="序号" fixed width="60"></el-table-column>
               <el-table-column
-                v-for="child in childs.children"
-                :key="child.id"
-                :width="child.width"
-                :prop="child.prop"
-                :label="child.label"
+                v-for="item in fixedHeaderTitleClone"
+                :key="item.id"
+                :prop="item.prop"
+                :label="item.label"
+                show-overflow-tooltip
+              ></el-table-column>
+              <el-table-column
+                v-for="childs in dynamicHeaderTitle"
+                :key="childs.id"
+                :label="childs.label"
+                :prop="childs.prop"
                 show-overflow-tooltip
               >
-                <!-- <template slot-scope="scope">
+                <el-table-column
+                  v-for="child in childs.children"
+                  :key="child.id"
+                  :width="child.width"
+                  :prop="child.prop"
+                  :label="child.label"
+                  show-overflow-tooltip
+                >
+                  <!-- <template slot-scope="scope">
                         <span>{{setRow(scope.row,child.prop)}}</span>
-                </template>-->
+                  </template>-->
+                </el-table-column>
               </el-table-column>
-            </el-table-column>
-          </el-table>
-          <el-table
-            v-else
-           
-            :data="reportWarWarDetail"
-            id="tableId"
-            style="width: 100%"
-            >
-            <el-table-column type="index" label="序号" fixed width="60"></el-table-column>
-            <el-table-column
-              v-for="item in fixedHeaderTitleClone"
-              :key="item.id"
-              :prop="item.prop"
-              :label="item.label"
-              show-overflow-tooltip
-            ></el-table-column>
-            <el-table-column
-              v-for="childs in dynamicHeaderTitle"
-              :key="childs.id"
-              :label="childs.label"
-              :prop="childs.prop"
-              show-overflow-tooltip
-            >
+            </el-table>
+            <el-table v-else :data="reportWarWarDetail" id="tableId" style="width: 100%">
+              <el-table-column type="index" label="序号" fixed width="60"></el-table-column>
               <el-table-column
-                v-for="child in childs.children"
-                :key="child.id"
-                :width="child.width"
-                :prop="child.prop"
-                :label="child.label"
+                v-for="item in fixedHeaderTitleClone"
+                :key="item.id"
+                :prop="item.prop"
+                :label="item.label"
+                show-overflow-tooltip
+              ></el-table-column>
+              <el-table-column
+                v-for="childs in dynamicHeaderTitle"
+                :key="childs.id"
+                :label="childs.label"
+                :prop="childs.prop"
                 show-overflow-tooltip
               >
-                <!-- <template slot-scope="scope">
+                <el-table-column
+                  v-for="child in childs.children"
+                  :key="child.id"
+                  :width="child.width"
+                  :prop="child.prop"
+                  :label="child.label"
+                  show-overflow-tooltip
+                >
+                  <!-- <template slot-scope="scope">
                         <span>{{setRow(scope.row,child.prop)}}</span>
-                </template>-->
+                  </template>-->
+                </el-table-column>
               </el-table-column>
-            </el-table-column>
-          </el-table>
+            </el-table>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -206,6 +201,7 @@ export default {
       reportWarWarDetail: [],
       curenIndex: 11,
       summariesFlag: false,
+      rightFlag: true,
       reportClassification: [
         {
           id: 1,
@@ -497,22 +493,22 @@ export default {
   created() {
     this._getPermissionOrgs();
     this._getCompanyProject();
-    this._getReportWarWarDetail(this.getWarehouseDetails1)
+    this._getReportWarWarDetail(this.getWarehouseDetails1);
     // this.HeaderTitle = this.fixedHeaderTitle.concat(this.dynamicHeaderTitle)
   },
   methods: {
     //切换搜索条件
-    changeHandelSearch(){
-        if (this.curenIndex === 11) {
-          this._getReportWarWarDetail(this.getWarehouseDetails1)
-          
-        } else if (this.curenIndex === 12) {
-          this._getReportWarWarDetail(this.getWarehouseDetails2)
-        } else if (this.curenIndex === 22) {
-          this._getReportWarInDown();
-        } else if (this.curenIndex === 31) {
-          this._getReportWarWarOutDetail();
-        }
+    changeHandelSearch() {
+      this.rightFlag = false;
+      if (this.curenIndex === 11) {
+        this._getReportWarWarDetail(this.getWarehouseDetails1);
+      } else if (this.curenIndex === 12) {
+        this._getReportWarWarDetail(this.getWarehouseDetails2);
+      } else if (this.curenIndex === 22) {
+        this._getReportWarInDown();
+      } else if (this.curenIndex === 31) {
+        this._getReportWarWarOutDetail();
+      }
     },
     //获取项目名称
     _getCompanyProject() {
@@ -532,7 +528,6 @@ export default {
     },
     //仓库库存明细报表生成报表
     _getReportWarWarDetail(callback) {
-     
       let index = this.permissionOrgs.findIndex(
         v => v.id === this.searchForm.orgId
       );
@@ -542,19 +537,19 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
-      }else{
-         this.searchForm.dateFrom =  null;
-        this.searchForm.dateTo =  null;
+      } else {
+        this.searchForm.dateFrom = null;
+        this.searchForm.dateTo = null;
       }
-       let data = {
+      let data = {
         ...this.searchForm
       };
       getReportWarWarDetail(data).then(res => {
         this.WarehouseDetails = JSON.parse(
           JSON.stringify(res.results.warCommonDto)
         );
-        
-        callback()
+
+        callback();
         // this.handClickLi(this.curenIndex);
         // this.getWarehouseDetails()
         // this.getWarehouseDetails()
@@ -565,9 +560,9 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
-      }else{
-         this.searchForm.dateFrom =  null;
-        this.searchForm.dateTo =  null;
+      } else {
+        this.searchForm.dateFrom = null;
+        this.searchForm.dateTo = null;
       }
       let data = {
         classifyCode: "",
@@ -597,9 +592,9 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
-      }else{
-        this.searchForm.dateFrom =  null;
-        this.searchForm.dateTo =  null;
+      } else {
+        this.searchForm.dateFrom = null;
+        this.searchForm.dateTo = null;
       }
       let data = {
         allotionName: "",
@@ -636,12 +631,12 @@ export default {
     handleExport() {},
     //点击左侧书结构
     handClickLi(index) {
+      this.rightFlag = false;
       this.curenIndex = index;
       if (this.curenIndex === 11) {
-        this._getReportWarWarDetail(this.getWarehouseDetails1)
-        
+        this._getReportWarWarDetail(this.getWarehouseDetails1);
       } else if (this.curenIndex === 12) {
-        this._getReportWarWarDetail(this.getWarehouseDetails2)
+        this._getReportWarWarDetail(this.getWarehouseDetails2);
       } else if (this.curenIndex === 22) {
         this._getReportWarInDown();
       } else if (this.curenIndex === 31) {
@@ -683,6 +678,7 @@ export default {
       this.reportWarWarDetail = this.WarehouseDetails;
       // this.getSpanArr()
       this.summariesFlag = false;
+      this.rightFlag = true;
     },
     // 收发存明细报表(汇总)
     getWarehouseDetails2() {
@@ -716,19 +712,21 @@ export default {
       });
       this.reportWarWarDetail = this.WarehouseDetails;
       this.summariesFlag = false;
+      this.rightFlag = true;
     },
     // 入库单明细报表
     getWarehouseDetails3() {
       this.fixedHeaderTitleClone = [];
       this.dynamicHeaderTitle = this.dynamicHeaderTitle3;
-      console.log(this.dynamicHeaderTitle)
+      console.log(this.dynamicHeaderTitle);
       this.reportWarInDown.forEach(v => {
         v.creatTime = formatYear(v.creatTime);
       });
       this.reportWarWarDetail = this.reportWarInDown;
-      this.getSpanArr(this.reportWarWarDetail, "projectName");
-      this.getSpanArr(this.reportWarWarDetail, "materialName");
+      // this.getSpanArr(this.reportWarWarDetail, "projectName");
+      // this.getSpanArr(this.reportWarWarDetail, "materialName");
       this.summariesFlag = true;
+      this.rightFlag = true;
     },
     // //出库明细汇总表
     getWarehouseDetails4() {
@@ -744,9 +742,10 @@ export default {
           v.outReturnNum;
       });
       this.reportWarWarDetail = this.reportWarWarOutDetail;
-      this.getSpanArr(this.reportWarWarDetail, "projectName");
-      this.getSpanArr(this.reportWarWarDetail, "materialName");
+      // this.getSpanArr(this.reportWarWarDetail, "projectName");
+      // this.getSpanArr(this.reportWarWarDetail, "materialName");
       this.summariesFlag = false;
+      this.rightFlag = true;
     },
     // 获取多少换行
     getSpanArr(data, key, target) {
@@ -794,7 +793,7 @@ export default {
 
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = data.length+1;
+          sums[index] = data.length + 1;
           return;
         }
         if (index === 1) {
@@ -802,7 +801,7 @@ export default {
           return;
         }
         const values = data.map(item => Number(item[column.property]));
-        console.log(column.property);
+        // console.log(column.property);
         if (column.property === "totalAmount") {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
