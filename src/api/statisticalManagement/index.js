@@ -35,3 +35,21 @@ export function getReportWarWarDetail(data){
         
     })
 }
+//生成报表
+export function getReportWarInDown(data){
+    return request({
+        url:'/contract/reportWar/in/down',
+        method:'post',
+        data
+        
+    })
+}
+//出库明细汇总表
+export function getReportWarWarOutDetail(data){
+    return request({
+        url:'/contract/reportWar/warOutDetail',
+        method:'post',
+        data
+        
+    })
+}
