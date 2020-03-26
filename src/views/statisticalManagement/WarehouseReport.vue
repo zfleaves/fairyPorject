@@ -110,7 +110,7 @@
             v-if="summariesFlag"
             :span-method="objectSpanMethod"
             :summary-method="getSummaries"
-            show-summary
+            :show-summary="reportWarWarDetail.length>=0"
             :data="reportWarWarDetail"
             id="tableId"
             style="width: 100%"
@@ -494,23 +494,6 @@ export default {
       ]
     };
   },
-  watch: {
-    "searchForm.orgId": {
-      handler() {
-         if (this.curenIndex === 11) {
-            this._getReportWarWarDetail(this.getWarehouseDetails1)
-            
-          } else if (this.curenIndex === 12) {
-            this._getReportWarWarDetail(this.getWarehouseDetails2)
-          } else if (this.curenIndex === 22) {
-            this._getReportWarInDown();
-          } else if (this.curenIndex === 31) {
-            this._getReportWarWarOutDetail();
-          }
-      },
-      deep: true
-    }
-  },
   created() {
     this._getPermissionOrgs();
     this._getCompanyProject();
@@ -549,9 +532,7 @@ export default {
     },
     //仓库库存明细报表生成报表
     _getReportWarWarDetail(callback) {
-      let data = {
-        ...this.searchForm
-      };
+     
       let index = this.permissionOrgs.findIndex(
         v => v.id === this.searchForm.orgId
       );
@@ -561,7 +542,13 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
+      }else{
+         this.searchForm.dateFrom =  null;
+        this.searchForm.dateTo =  null;
       }
+       let data = {
+        ...this.searchForm
+      };
       getReportWarWarDetail(data).then(res => {
         this.WarehouseDetails = JSON.parse(
           JSON.stringify(res.results.warCommonDto)
@@ -578,6 +565,9 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
+      }else{
+         this.searchForm.dateFrom =  null;
+        this.searchForm.dateTo =  null;
       }
       let data = {
         classifyCode: "",
@@ -607,6 +597,9 @@ export default {
       if (this.startDate && this.startDate.length) {
         this.searchForm.dateFrom = this.startDate[0] || null;
         this.searchForm.dateTo = this.startDate[1] || null;
+      }else{
+        this.searchForm.dateFrom =  null;
+        this.searchForm.dateTo =  null;
       }
       let data = {
         allotionName: "",
@@ -728,6 +721,7 @@ export default {
     getWarehouseDetails3() {
       this.fixedHeaderTitleClone = [];
       this.dynamicHeaderTitle = this.dynamicHeaderTitle3;
+      console.log(this.dynamicHeaderTitle)
       this.reportWarInDown.forEach(v => {
         v.creatTime = formatYear(v.creatTime);
       });
@@ -800,7 +794,7 @@ export default {
 
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = data.length++;
+          sums[index] = data.length+1;
           return;
         }
         if (index === 1) {
