@@ -45,6 +45,15 @@ export function checkMaterialCode(materialCode){
         }
     })
 }
+//供应商名称
+export function getSupplierListAll(){
+    return request({
+        url:'/contract/supplier/list/all',
+        method:'get',
+        
+    })
+}
+
 
 
 

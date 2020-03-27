@@ -25,8 +25,12 @@
         <el-col :span="8">
           <el-form-item label="所属公司">
             <el-select v-model="searchForm.orgId" placeholder="请选择所属公司">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+              <el-option
+                v-for="item in managerOrgs"
+                :key="item.id"
+                :label="item.orgName"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -38,8 +42,12 @@
         <el-col :span="8">
           <el-form-item label="公司仓库" prop="orgWarehouseId">
             <el-select v-model="searchForm.orgWarehouseId" placeholder="请选择公司仓库">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+               <el-option
+                v-for="item in warehouseListAll"
+                :key="item.id"
+                :label="item.warehouseName"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -47,7 +55,15 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称">
-            <el-input v-model="searchForm.supplierName" placeholder="请输入供应商名称"></el-input>
+            <!-- <el-input v-model="searchForm.supplierName" placeholder="请输入供应商名称"></el-input> -->
+             <el-select v-model="searchForm.supplierName" placeholder="请选择公司仓库">
+               <el-option
+                v-for="item in supplierListAll"
+                :key="item.id"
+                :label="item.supplierFullName"
+                :value="item.supplierFullName"
+              ></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -242,13 +258,17 @@
 <script>
 import TitleComponents from "components/titleComponent";
 import RightModal from "components/rightModal/rightModal";
+import {closeRoute} from 'mixins'
 import {
   createOrgIncoming,
-  checkMaterialCode
+  checkMaterialCode,
+  getManagerOrgs,
+  getSupplierListAll
 } from "api/fixedAssetsManagement";
 import { formatTime } from "util";
 export default {
   name: "",
+  mixins:[closeRoute],
   components: {
     TitleComponents,
     RightModal
@@ -328,13 +348,13 @@ export default {
       searchForm: {
         appraiseStatus: "01",
         attachmentId: "",
-        createTime: 1585277889052,
-        incomingDescription: "入库描述",
-        incomingTime: "2020-03-27 00:00:00",
-        orgId: 378,
-        orgWarehouseId: 43,
-        remarks: "备注",
-        supplierName: "金三角供应商"
+        createTime: new Date(),
+        incomingDescription: "",
+        incomingTime: "",
+        orgId: "",
+        orgWarehouseId: "",
+        remarks: "",
+        supplierName: ""
       },
       details: [],
       detail: {
@@ -393,10 +413,34 @@ export default {
            { validator: checkBuyTime, trigger: "change" }
         ]
       },
-      showRightModal: false
+      showRightModal: false,
+      supplierListAll:[],
+      warehouseListAll:[]
     };
   },
+  created(){
+      this._getManagerOrgs()
+      this._getSupplierListAll()
+  },
   methods: {
+      //获取所属公司
+    _getManagerOrgs() {
+      getManagerOrgs().then(res => {
+        this.managerOrgs = res.results;
+      });
+    },
+    //获取供应商名称
+    _getSupplierListAll(){
+        getSupplierListAll().then(res => {
+        this.supplierListAll = res.results;
+      });
+    },
+    //获取公司仓库
+    changeManagerOrgs() {
+      getWarehouseListAll(this.searchFrom.orgId).then(res => {
+        this.warehouseListAll = res.results;
+      });
+    },
     //添加明细
     handleAddDetails() {
       this.showRightModal = true;
@@ -423,9 +467,13 @@ export default {
       this.showRightModal = false;
     },
     //取消
-    successCancel() {},
+    successCancel() {
+         this.setRoute();
+    },
     // 确认提交
-    successSubmit() {},
+    successSubmit() {
+
+    },
     setMoney() {
       this.detail.totalPrice =
         this.detail.quantityIn * this.detail.averagePrice;
