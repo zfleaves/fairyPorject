@@ -146,7 +146,7 @@
           </el-table>
           <el-table
             v-else
-           
+
             :data="reportWarWarDetail"
             id="tableId"
             style="width: 100%"
@@ -505,7 +505,7 @@ export default {
     changeHandelSearch(){
         if (this.curenIndex === 11) {
           this._getReportWarWarDetail(this.getWarehouseDetails1)
-          
+
         } else if (this.curenIndex === 12) {
           this._getReportWarWarDetail(this.getWarehouseDetails2)
         } else if (this.curenIndex === 22) {
@@ -532,7 +532,7 @@ export default {
     },
     //仓库库存明细报表生成报表
     _getReportWarWarDetail(callback) {
-     
+
       let index = this.permissionOrgs.findIndex(
         v => v.id === this.searchForm.orgId
       );
@@ -553,7 +553,7 @@ export default {
         this.WarehouseDetails = JSON.parse(
           JSON.stringify(res.results.warCommonDto)
         );
-        
+
         callback()
         // this.handClickLi(this.curenIndex);
         // this.getWarehouseDetails()
@@ -639,7 +639,7 @@ export default {
       this.curenIndex = index;
       if (this.curenIndex === 11) {
         this._getReportWarWarDetail(this.getWarehouseDetails1)
-        
+
       } else if (this.curenIndex === 12) {
         this._getReportWarWarDetail(this.getWarehouseDetails2)
       } else if (this.curenIndex === 22) {
