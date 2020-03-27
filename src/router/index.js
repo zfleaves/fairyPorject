@@ -869,6 +869,13 @@ export const constantRouterMap = [
     name: 'fixedAssetsManagement',
     component: () => import('views/lyout/index'),
     children: [
+      {
+        path: 'orgIncomingSet/:type/:id',
+        // component: _import('supplierManagement/assessmentSet'),
+        component: () => import('views/fixedAssetsManagement/orgIncoming/orgIncomingSet'),
+        name: 'orgIncomingSet',
+        meta: {title: '固定资产入库单添加', name: '固定资产入库单添加', isCached: true, lastRouterName: 'orgIncoming'}
+      },
       // {
       //   path: 'companyWarehouse',
       //   name: 'companyWarehouse',
