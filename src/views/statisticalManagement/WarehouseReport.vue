@@ -1,4 +1,3 @@
-
 <template>
   <div class="WarehouseReport">
     <el-row :gutter="20">
