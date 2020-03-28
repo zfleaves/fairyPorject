@@ -34,7 +34,7 @@
                     <div class="suspension">
                         <i  @click="iconView(item)" class="el-icon-view"></i>
                         <i   @click="iconDownload(item)" class="el-icon-download"></i>
-                        <i v-if="isClick" @click="iconDelete(item)" class="el-icon-close"></i>
+                        <i v-if="!isClick" @click="iconDelete(item)" class="el-icon-close"></i>
                     </div>
                 </div>
             </div>

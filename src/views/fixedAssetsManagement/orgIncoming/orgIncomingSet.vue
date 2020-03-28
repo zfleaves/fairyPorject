@@ -531,8 +531,15 @@ export default {
       this.isModelEdit = true;
       this.showRightModal = true;
       //保存一份当前修改的数据
+     
       this.eventEditRow = JSON.parse(JSON.stringify(row));
       this.detail = JSON.parse(JSON.stringify(row));
+       if(!isNaN(row.buyTime)){
+        this.detail.buyTime = formatTime(row.buyTime)
+      }
+      if(!isNaN(row.expireTime)){
+        this.detail.expireTime = formatTime(row.expireTime)
+      }
     },
     //删除明细
     handClickDelet(row) {
