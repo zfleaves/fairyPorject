@@ -70,4 +70,20 @@ export function downTemplate(){
         method:'get',
     })
 }
+//修改
+export function updateOrgIncoming(data){
+    return request({
+        url:'/contract/org/incoming/update',
+        method:'post',
+        data
+    })
+}
 
+//修改 获得附件内容
+export function getFilepathList(data){
+    return request({
+        url:'/sysbase/confiles/filepath/list',
+        method:'post',
+        data
+    })
+}

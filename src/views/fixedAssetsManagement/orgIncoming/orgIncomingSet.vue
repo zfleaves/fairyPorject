@@ -24,7 +24,12 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="所属公司">
-            <el-select :disabled="!flowStatus" @change="changeManagerOrgs" v-model="searchForm.orgId" placeholder="请选择所属公司">
+            <el-select
+              :disabled="!flowStatus"
+              @change="changeManagerOrgs"
+              v-model="searchForm.orgId"
+              placeholder="请选择所属公司"
+            >
               <el-option
                 v-for="item in managerOrgs"
                 :key="item.id"
@@ -40,8 +45,12 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item  label="公司仓库" prop="orgWarehouseId">
-            <el-select :disabled="!flowStatus" v-model="searchForm.orgWarehouseId" placeholder="请选择公司仓库">
+          <el-form-item label="公司仓库" prop="orgWarehouseId">
+            <el-select
+              :disabled="!flowStatus"
+              v-model="searchForm.orgWarehouseId"
+              placeholder="请选择公司仓库"
+            >
               <el-option
                 v-for="item in warehouseListAll"
                 :key="item.id"
@@ -56,7 +65,11 @@
         <el-col :span="8">
           <el-form-item label="供应商名称">
             <!-- <el-input v-model="searchForm.supplierName" placeholder="请输入供应商名称"></el-input> -->
-            <el-select :disabled="!flowStatus" v-model="searchForm.supplierName" placeholder="请选择公司仓库">
+            <el-select
+              :disabled="!flowStatus"
+              v-model="searchForm.supplierName"
+              placeholder="请选择公司仓库"
+            >
               <el-option
                 v-for="item in supplierListAll"
                 :key="item.id"
@@ -68,28 +81,46 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="登记日期" prop="createTime">
-            <el-date-picker :disabled="!flowStatus" v-model="searchForm.createTime" type="date" placeholder="选择日期"></el-date-picker>
+            <el-date-picker
+              :disabled="!flowStatus"
+              v-model="searchForm.createTime"
+              type="date"
+              placeholder="选择日期"
+            ></el-date-picker>
             <!-- <el-input v-model="form.name" placeholder="请输入供应商名称"></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="入库描述" prop="incomingDescription">
-            <el-input :disabled="!flowStatus" v-model="searchForm.incomingDescription" placeholder="请输入入库描述"></el-input>
+            <el-input
+              :disabled="!flowStatus"
+              v-model="searchForm.incomingDescription"
+              placeholder="请输入入库描述"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="上传附件">
-            <span :disabled="!flowStatus">上传</span>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="备注">
-            <el-input :disabled="!flowStatus" type="textarea" placeholder="请输入备注" v-model="searchForm.remarks"></el-input>
+            <el-input
+              :disabled="!flowStatus"
+              type="textarea"
+              placeholder="请输入备注"
+              v-model="searchForm.remarks"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="上传附件">
+             <upload :isClick="!flowStatus" @attachment="getAttachment" :filepathList="filepathList"></upload>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    
+      
     </el-form>
     <div style="text-align:right;margin-bottom: 20px;">
       <el-button
@@ -123,7 +154,7 @@
       class="maintainConTable"
       ref="maintainConTable"
       style="width: 100%"
-    >
+      >
       <el-table-column fixed type="index" label="序号" width="60"></el-table-column>
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="classifyName" label="固定资产分类" show-overflow-tooltip width="80">
@@ -145,13 +176,13 @@
       <el-table-column prop="manufacturer" label="生产厂家或品牌" width="120" show-overflow-tooltip></el-table-column>
       <el-table-column prop="buyTime" label="购置日期" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.buyTime | spliteTime}}</span>
+          <span>{{scope.row.buyTime | setYear}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="useYear" label="使用年限(年)" width="120" show-overflow-tooltip></el-table-column>
       <el-table-column prop="expireTime" label="使用到期日" width="120" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.expireTime | spliteTime}}</span>
+          <span>{{scope.row.expireTime | setYear}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="personLiable" label="责任人" width="80" show-overflow-tooltip></el-table-column>
@@ -200,13 +231,8 @@
           <el-form-item label="入库数量" prop="quantityIn">
             <el-input @change="setMoney" v-model="detail.quantityIn" placeholder="请输入入库数量"></el-input>
           </el-form-item>
-          <el-form-item label="单价(元)">
-            <el-input
-              @change="setMoney"
-              prop="averagePrice"
-              v-model="detail.averagePrice"
-              placeholder="请输入单价(元)"
-            ></el-input>
+          <el-form-item label="单价(元)" prop="averagePrice">
+            <el-input @change="setMoney" v-model="detail.averagePrice" placeholder="请输入单价(元)"></el-input>
           </el-form-item>
           <el-form-item label="金额(元)">
             <el-input v-model="detail.totalPrice" disabled placeholder="请输入金额(元)"></el-input>
@@ -269,6 +295,7 @@
 import TitleComponents from "components/titleComponent";
 import RightModal from "components/rightModal/rightModal";
 import { closeRoute } from "mixins";
+import Upload from 'components/upload/upload2'
 
 import {
   createOrgIncoming,
@@ -277,7 +304,9 @@ import {
   getSupplierListAll,
   getWarehouseListAll,
   getIncomingInfo,
-  downTemplate
+  downTemplate,
+  updateOrgIncoming,
+  getFilepathList
 } from "api/fixedAssetsManagement";
 import { formatTime } from "util";
 export default {
@@ -285,7 +314,8 @@ export default {
   mixins: [closeRoute],
   components: {
     TitleComponents,
-    RightModal
+    RightModal,
+    Upload
   },
   data() {
     var checkMaterial = (rule, value, callback) => {
@@ -343,8 +373,11 @@ export default {
       } else {
         let year = this.detail.buyTime.slice(0, 4);
         let time = this.detail.buyTime.slice(4, 10);
-        this.detail.expireTime =
-          Number(year) + Number(this.detail.useYear) + time + " 00:00:00";
+        let t = new Date(
+          Number(year) + Number(this.detail.useYear) + time + " 00:00:00"
+        );
+        this.detail.expireTime = t.getTime();
+
         callback();
       }
     };
@@ -354,8 +387,12 @@ export default {
       } else {
         let year = this.detail.buyTime.slice(0, 4);
         let time = this.detail.buyTime.slice(4, 10);
-        this.detail.expireTime =
-          Number(year) + Number(this.detail.useYear) + time + " 00:00:00";
+
+        let t = new Date(
+          Number(year) + Number(this.detail.useYear) + time + " 00:00:00"
+        );
+        this.detail.expireTime = t.getTime();
+
         callback();
       }
     };
@@ -373,7 +410,7 @@ export default {
         remarks: "",
         supplierName: ""
       },
-      docNos:"",
+      docNos: "",
       details: [],
       detail: {
         averagePrice: "",
@@ -435,8 +472,9 @@ export default {
       managerOrgs: [],
       eventEditRow: {},
       isModelEdit: false,
-      id:"",
-      type:""
+      id: "",
+      type: "",
+      filepathList:[]
     };
   },
   created() {
@@ -446,9 +484,9 @@ export default {
     this.id = this.Base64.decode(params.id);
     this.type = this.Base64.decode(params.type);
     if (this.id >= 0) {
-        this._getIncomingInfo()
-      }
-    this.flowStatus = this.type !== 'info';
+      this._getIncomingInfo();
+    }
+    this.flowStatus = this.type !== "info";
   },
   methods: {
     //获取所属公司
@@ -494,24 +532,7 @@ export default {
       this.showRightModal = true;
       //保存一份当前修改的数据
       this.eventEditRow = JSON.parse(JSON.stringify(row));
-      this.detail =  JSON.parse(JSON.stringify(row));
-      // this.detail.classifyName = row.classifyName;
-      // this.detail.materialName = row.materialName;
-      // this.detail.materialCode = row.materialCode;
-      // this.detail.standards = row.standards;
-      // this.detail.unit = row.unit;
-      // this.detail.quantityIn = row.quantityIn;
-      // this.detail.averagePrice = row.averagePrice;
-      // this.detail.totalPrice = row.totalPrice;
-      // this.detail.manufacturer = row.manufacturer;
-      // this.detail.buyTime = row.buyTime;
-      // this.detail.useYear = row.useYear;
-      // this.detail.expireTime = row.expireTime;
-      // this.detail.personLiable = row.personLiable;
-      // this.detail.storageLocation = row.storageLocation;
-      // this.detail.remarks = row.remarks;
-      // this.detail.model = row.model;
-      // this.detail.quality = row.quality;
+      this.detail = JSON.parse(JSON.stringify(row));
     },
     //删除明细
     handClickDelet(row) {
@@ -588,17 +609,32 @@ export default {
           };
 
           data.details = this.details;
-          createOrgIncoming(data).then(res => {
-            if (res.status === 0) {
-              this.$message({
-                message: "固定资产入库添加成功",
-                type: "success"
-              });
-              this.setRoute();
-            } else {
-              this.$message.error(res.errorMessage);
-            }
-          });
+          if (this.type === "add") {
+            createOrgIncoming(data).then(res => {
+              if (res.status === 0) {
+                this.$message({
+                  message: "固定资产入库添加成功",
+                  type: "success"
+                });
+                this.setRoute();
+              } else {
+                this.$message.error(res.errorMessage);
+              }
+            });
+          } else {
+            data.id = this.id;
+            updateOrgIncoming(data).then(res => {
+              if (res.status === 0) {
+                this.$message({
+                  message: "固定资产入库修改成功",
+                  type: "success"
+                });
+                this.setRoute();
+              } else {
+                this.$message.error(res.errorMessage);
+              }
+            });
+          }
         } else {
           console.log("error submit!!");
           return false;
@@ -606,40 +642,61 @@ export default {
       });
     },
     //获取修改数据
-    _getIncomingInfo(){
-      getIncomingInfo(this.id).then(res=>{
-        if(res.status === 0){
+    _getIncomingInfo() {
+      getIncomingInfo(this.id).then(res => {
+        if (res.status === 0) {
           let result = res.results;
-          this.searchForm.orgId = result.orgId
-          this.docNos = result.docNo
-          this.searchForm.orgWarehouseId = result.orgWarehouseId
-          this.searchForm.supplierName = result.supplierName
-          this.searchForm.createTime = result.createTime
-          this.searchForm.incomingDescription = result.incomingDescription
-          this.searchForm.remarks = result.remarks
-          this.searchForm.attachmentId = result.attachmentId
-          this.details = result.details
+          this.searchForm.orgId = result.orgId;
+          this.docNos = result.docNo;
+          this.searchForm.orgWarehouseId = result.orgWarehouseId;
+          this.searchForm.supplierName = result.supplierName;
+          this.searchForm.createTime = result.createTime;
+          this.searchForm.incomingDescription = result.incomingDescription;
+          this.searchForm.remarks = result.remarks;
+          this.searchForm.attachmentId = result.attachmentId;
+          this.details = result.details;
+          this._getFilepathList()
         }
-      })
+      });
     },
     //下载模版
-    handleDownTemplate(){
-      downTemplate().then(res=>{
-        if(res.status === 0){
-           let url = window.URL.createObjectURL(new Blob([res]));
-                let link = document.createElement('a');
-                link.style.display = 'none';
-                link.href = url;
-                let fileName = res.results.split("/")[1]
-                link.setAttribute('download', fileName);
-                document.body.appendChild(link);
-                link.click()
-          console.log('success')
+    handleDownTemplate() {
+      downTemplate().then(res => {
+        if (res.status === 0) {
+          let url = window.URL.createObjectURL(new Blob([res]));
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = url;
+          let fileName = res.results.split("/")[1];
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+          console.log("success");
         }
-      })
+      });
     },
+    //活动上传文件id字符串
+        getAttachment(val){
+            this.searchForm.attachmentId = val
+            // this.length = val.split(',').length
+        },
+    //获取上传文件
+        _getFilepathList(){
+           
+            let fileIds = this.searchForm.attachmentId.split(',')
+            let data = {
+                fileIds:fileIds
+            }
+            getFilepathList(data).then(res=>{
+            
+                this.filepathList = res.results
+                  console.log(this.filepathList)
+                
+            })
+        },
     setMoney() {
-      this.detail.totalPrice = this.detail.quantityIn * this.detail.averagePrice;
+      this.detail.totalPrice =
+        this.detail.quantityIn * this.detail.averagePrice;
     }
   }
 };
