@@ -24,7 +24,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="所属公司">
-            <el-select v-model="searchForm.orgId" placeholder="请选择所属公司">
+            <el-select @change="changeManagerOrgs" v-model="searchForm.orgId" placeholder="请选择所属公司">
               <el-option
                 v-for="item in managerOrgs"
                 :key="item.id"
@@ -141,15 +141,23 @@
       </el-table-column>
       <el-table-column prop="quantityIn" label="入库数量" show-overflow-tooltip></el-table-column>
       <el-table-column prop="averagePrice" label="单价(元)" width="100"></el-table-column>
-      <el-table-column prop="totalPrice" label="金额(元)" width="300" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="manufacturer" label="生产厂家或品牌" width="300" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="buyTime" label="购置日期" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="useYear" label="使用年限(年)" width="80"></el-table-column>
-      <el-table-column prop="expireTime" label="使用到期日" width="80"></el-table-column>
-      <el-table-column prop="personLiable" label="责任人" width="80"></el-table-column>
-      <el-table-column prop="storageLocation" label="存放地点" width="80"></el-table-column>
-      <el-table-column prop="remarks" label="备注" width="80"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column prop="totalPrice" label="金额(元)" width="100" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="manufacturer" label="生产厂家或品牌" width="120" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="buyTime" label="购置日期" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span>{{scope.row.buyTime | spliteTime}}</span>
+          </template>
+      </el-table-column>
+      <el-table-column prop="useYear" label="使用年限(年)" width="120" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="expireTime" label="使用到期日" width="120" show-overflow-tooltip>
+        <template slot-scope="scope">
+            <span>{{scope.row.expireTime | spliteTime}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="personLiable" label="责任人" width="80" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="storageLocation" label="存放地点" width="80" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="remarks" label="备注" width="80" show-overflow-tooltip></el-table-column>
+      <el-table-column fixed="right" label="操作" width="100" show-overflow-tooltip>
         <template slot-scope="scope">
           <el-button
             style="color:3e75ff;"
@@ -259,11 +267,13 @@
 import TitleComponents from "components/titleComponent";
 import RightModal from "components/rightModal/rightModal";
 import {closeRoute} from 'mixins'
+
 import {
   createOrgIncoming,
   checkMaterialCode,
   getManagerOrgs,
-  getSupplierListAll
+  getSupplierListAll,
+  getWarehouseListAll 
 } from "api/fixedAssetsManagement";
 import { formatTime } from "util";
 export default {
@@ -277,8 +287,7 @@ export default {
     var checkMaterial = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入固定资产编码"));
-      }
-      setTimeout(() => {
+      }else{
         checkMaterialCode(value).then(res => {
           if (res.results !== 0) {
             callback(new Error("固定资产物资编码不能重复"));
@@ -286,13 +295,12 @@ export default {
             callback();
           }
         });
-      }, 1000);
+      }
     };
     var checkQuantityIn = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入入库数量"));
-      }
-      setTimeout(() => {
+      }else{
         if (isNaN(value)) {
           this.detail.quantityIn = 0;
           return callback(new Error("入库数量必须大于0"));
@@ -302,13 +310,13 @@ export default {
         } else {
           callback();
         }
-      }, 1000);
+      }
+     
     };
     var checkAveragePrice = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入单价(元)"));
-      }
-      setTimeout(() => {
+      }else{
         if (isNaN(value)) {
           this.detail.averagePrice = 0;
           return callback(new Error("单价必须大于0"));
@@ -318,29 +326,36 @@ export default {
         } else {
           callback();
         }
-      }, 1000);
+      }
     };
     var checkUseYear = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入使用年限"));
-      }
-      setTimeout(() => {
+      }else if (isNaN(value)) {
+          this.detail.useYear = 0;
+          return callback(new Error("年限必须大于或等于0"));
+        } else if (value <= 0) {
+          this.detail.useYear = 0;
+          return callback(new Error("年限必须大于或等于0"));
+        } else {
         let year = this.detail.buyTime.slice(0, 4);
         let time = this.detail.buyTime.slice(4, 10);
         this.detail.expireTime =
           Number(year) + Number(this.detail.useYear) + time + " 00:00:00";
-      }, 1000);
+          callback();
+        }
+      
     };
     var checkBuyTime = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("选择购置日期"));
-      }
-      setTimeout(() => {
-        let year = this.detail.buyTime.slice(0, 4);
+      }else{
+          let year = this.detail.buyTime.slice(0, 4);
         let time = this.detail.buyTime.slice(4, 10);
         this.detail.expireTime =
           Number(year) + Number(this.detail.useYear) + time + " 00:00:00";
-      }, 1000);
+           callback();
+      }
     };
 
     return {
@@ -415,7 +430,10 @@ export default {
       },
       showRightModal: false,
       supplierListAll:[],
-      warehouseListAll:[]
+      warehouseListAll:[],
+      managerOrgs:[],
+      eventEditRow:{},
+      isModelEdit:false
     };
   },
   created(){
@@ -437,14 +455,69 @@ export default {
     },
     //获取公司仓库
     changeManagerOrgs() {
-      getWarehouseListAll(this.searchFrom.orgId).then(res => {
+      getWarehouseListAll(this.searchForm.orgId).then(res => {
         this.warehouseListAll = res.results;
       });
     },
     //添加明细
     handleAddDetails() {
+      if(!this.searchForm.orgId){
+        this.$message({
+          message: '请选择公司',
+          type: 'warning'
+        });
+        return
+      }
+      if(!this.searchForm.orgWarehouseId){
+        this.$message({
+          message: '请选择仓库',
+          type: 'warning'
+        });
+        return
+      }
       this.showRightModal = true;
       this.detail.buyTime = formatTime(new Date());
+    },
+    //修改明细
+    handClickEdit(row){
+      this.isModelEdit = true
+      this.showRightModal = true;
+      //保存一份当前修改的数据
+      this.eventEditRow = JSON.parse(JSON.stringify(row))
+      this.detail.classifyName = row.classifyName
+      this.detail.materialName = row.materialName
+      this.detail.materialCode = row.materialCode
+      this.detail.standards = row.standards
+      this.detail.unit = row.unit
+      this.detail.quantityIn = row.quantityIn
+      this.detail.averagePrice = row.averagePrice
+      this.detail.totalPrice = row.totalPrice
+      this.detail.manufacturer = row.manufacturer
+      this.detail.buyTime = row.buyTime
+      this.detail.useYear = row.useYear
+      this.detail.expireTime = row.expireTime
+      this.detail.personLiable = row.personLiable
+      this.detail.storageLocation = row.storageLocation
+      this.detail.remarks = row.remarks
+      this.detail.model = row.model
+      this.detail.quality = row.quality
+    },
+    //删除明细
+    handClickDelet(row){
+       this.$confirm('确定删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.details.splice(this.details.indexOf(row), 1);
+          this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        }).catch(() => {
+          this.$message.error('已取消删除');
+        });
+      
     },
     _checkMaterialCode() {},
     //右侧弹窗确定
@@ -452,9 +525,31 @@ export default {
       this.$refs[formName].validate(valid => {
           console.log(valid)
         if (valid) {
-          this.details.push(this.detail);
-          this.detail = {};
-          this.showRightModal = false;
+          if(this.isModelEdit){//是编辑状态
+             this.details.splice(this.details.indexOf(this.eventEditRow), 1);
+             this.details.push(this.detail);
+              this.detail = {};
+              this.showRightModal = false;
+              this.eventEditRow = {}
+              this.isModelEdit = false
+          }else{
+            this.details.push(this.detail);
+            this.detail = {}; 
+            this.$confirm('是否继续添加?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.showRightModal = false;  
+              this.showRightModal = true;        
+            }).catch(() => {
+              this.showRightModal = false;        
+            });
+          }
+         
+          
+          
+          
         } else {
           console.log("error submit!!");
           return false;
@@ -465,14 +560,41 @@ export default {
     cancelRightModal() {
       this.detail = {};
       this.showRightModal = false;
+      this.eventEditRow = {}
+      this.isModelEdit = false
     },
     //取消
     successCancel() {
          this.setRoute();
     },
     // 确认提交
-    successSubmit() {
-
+    successSubmit(formName) {
+       this.$refs[formName].validate(valid => {
+          // console.log(valid)
+        if (valid) {
+          let data = {
+            ...this.searchForm
+          }
+          
+          data.details = this.details
+          createOrgIncoming(data).then(res=>{
+            if(res.status === 0){
+               this.$message({
+                message: '固定资产入库添加成功',
+                type: 'success'
+              });
+              this.setRoute();
+            }else{
+                this.$message.error(res.errorMessage);
+            }
+          })
+          
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+      
     },
     setMoney() {
       this.detail.totalPrice =

@@ -12,6 +12,12 @@ let setYear = (val) =>{
 let setMoney = (val) =>{
     return toQfw(val)
 }
+// 截取时间
+let spliteTime = (val)=>{
+    let a = val.slice(0,10)
+    return a
+}
+    
 
 //设置流程状态
 let setFlowStatus = (val) =>{
@@ -65,5 +71,6 @@ export default{
     setIdcardFilter,
     IDcardHide,
     telHide,
-    setAddress
+    setAddress,
+    spliteTime
 }
