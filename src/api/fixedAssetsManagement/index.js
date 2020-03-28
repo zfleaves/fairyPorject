@@ -53,7 +53,21 @@ export function getSupplierListAll(){
         
     })
 }
+//获取修改的数据
+export function getIncomingInfo(incomingId){
+    return request({
+        url:'/contract/org/incoming/info',
+        method:'get',
+        params:{
+            incomingId
+        }
+    })
+}
 
-
-
+export function downTemplate(){
+    return request({
+        url:'/contract/org/incoming/down/template',
+        method:'get',
+    })
+}
 

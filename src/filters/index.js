@@ -14,7 +14,8 @@ let setMoney = (val) =>{
 }
 // 截取时间
 let spliteTime = (val)=>{
-    let a = val.slice(0,10)
+    let aa = val ? formatYear(val) : '' 
+    let a = aa.slice(0,10)
     return a
 }
     

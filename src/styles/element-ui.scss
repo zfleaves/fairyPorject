@@ -923,4 +923,18 @@
  .el-date-editor{
   width: 100%;
  }
+ .el-input{
+  &.is-disabled{
+    .el-input__inner{
+      color: #333;
+    }
+  }
+ } 
+ .el-textarea{
+    &.is-disabled{
+      .el-textarea__inner{
+        color: #333;
+      }
+    }
+ } 
 }
