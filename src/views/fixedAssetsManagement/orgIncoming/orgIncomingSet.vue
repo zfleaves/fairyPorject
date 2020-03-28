@@ -494,23 +494,24 @@ export default {
       this.showRightModal = true;
       //保存一份当前修改的数据
       this.eventEditRow = JSON.parse(JSON.stringify(row));
-      this.detail.classifyName = row.classifyName;
-      this.detail.materialName = row.materialName;
-      this.detail.materialCode = row.materialCode;
-      this.detail.standards = row.standards;
-      this.detail.unit = row.unit;
-      this.detail.quantityIn = row.quantityIn;
-      this.detail.averagePrice = row.averagePrice;
-      this.detail.totalPrice = row.totalPrice;
-      this.detail.manufacturer = row.manufacturer;
-      this.detail.buyTime = row.buyTime;
-      this.detail.useYear = row.useYear;
-      this.detail.expireTime = row.expireTime;
-      this.detail.personLiable = row.personLiable;
-      this.detail.storageLocation = row.storageLocation;
-      this.detail.remarks = row.remarks;
-      this.detail.model = row.model;
-      this.detail.quality = row.quality;
+      this.detail =  JSON.parse(JSON.stringify(row));
+      // this.detail.classifyName = row.classifyName;
+      // this.detail.materialName = row.materialName;
+      // this.detail.materialCode = row.materialCode;
+      // this.detail.standards = row.standards;
+      // this.detail.unit = row.unit;
+      // this.detail.quantityIn = row.quantityIn;
+      // this.detail.averagePrice = row.averagePrice;
+      // this.detail.totalPrice = row.totalPrice;
+      // this.detail.manufacturer = row.manufacturer;
+      // this.detail.buyTime = row.buyTime;
+      // this.detail.useYear = row.useYear;
+      // this.detail.expireTime = row.expireTime;
+      // this.detail.personLiable = row.personLiable;
+      // this.detail.storageLocation = row.storageLocation;
+      // this.detail.remarks = row.remarks;
+      // this.detail.model = row.model;
+      // this.detail.quality = row.quality;
     },
     //删除明细
     handClickDelet(row) {
