@@ -940,4 +940,17 @@
  .el-upload-list{
    display: none;
  }
+ .el-dialog{
+   min-height: 600px;
+   .el-table{
+    // min-height: 600px;
+    .el-table__body-wrapper{
+      min-height: 400px;
+    }
+    .el-form-item{
+      margin: 5px 0;
+    }
+   }
+ }
+ 
 }

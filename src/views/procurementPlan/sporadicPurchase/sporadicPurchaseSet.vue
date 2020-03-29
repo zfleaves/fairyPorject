@@ -133,7 +133,7 @@
                     <el-table-column label="物资名称" prop="materialName" show-overflow-tooltip>
                         <template slot-scope="scope">
                             <el-form-item  :prop="'tableData[' + scope.$index + '].materialName'" :rules='model.rules.materialName'>
-                                <el-input v-if="!flowStatus" clearable size="small"  v-model="scope.row.materialName"
+                                <el-input  v-if="!flowStatus" clearable size="small"  v-model="scope.row.materialName"
                                             placeholder="请输入物资名称">
                                 </el-input>
                                  <span v-else>{{scope.row.materialName}}</span>

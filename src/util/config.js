@@ -8,5 +8,7 @@ const config = {
   fileUrl: base_url + "/sysbase/confiles/upload",
    // 文件下载
    fileCmsUrl: base_url + "/sysbase/confiles/cms/download?filePath=",
+   //上传模板
+   mubanUrl:base_url+"/contract/org/incoming/detail/import"
 }
 export default config

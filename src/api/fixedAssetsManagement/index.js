@@ -87,3 +87,34 @@ export function getFilepathList(data){
         data
     })
 }
+//判断是否有流程审批功能
+export function getStartNodeAssigneeUsers(orgWarIncomingId){
+    return request({
+        url:'/contract/org/incoming/workflow/start/node/assignee/users',
+        method:'get',
+        params:{
+            orgWarIncomingId
+        }
+    })
+}
+//提交流程
+export function startIncomingWorkflow(data){
+    return request({
+        url:'/contract/org/incoming/workflow/start',
+        method:'post',
+        data
+    })
+}
+
+//导入模板
+export function importIncomingDetail(data){
+    return request({
+        url:'/contract/org/incoming/detail/import',
+        method:'post',
+        data
+    })
+}
+// companyId: 316
+// fileName: orgWarIncoming_detail_template_1565599651262.xls
+// file: (binary)
+

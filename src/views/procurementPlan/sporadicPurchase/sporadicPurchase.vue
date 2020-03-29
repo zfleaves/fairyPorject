@@ -54,6 +54,7 @@
                 @handleExport="handleExport"
                 ></button-component2>
                 <el-table
+                    
                     class="maintainConTable"
                     :data="tableData"
                     ref="maintainConTable"
