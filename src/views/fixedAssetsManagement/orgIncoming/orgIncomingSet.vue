@@ -405,7 +405,7 @@
               </el-form-item>
             </template>
           </el-table-column>
-          <el-table-column  prop="buyTime" label="购置日期" show-overflow-tooltip>
+          <el-table-column  prop="buyTime" width="200" label="购置日期" show-overflow-tooltip>
             <template slot-scope="scope">
               <el-form-item
 
@@ -433,14 +433,19 @@
               </el-form-item>
             </template>
           </el-table-column>
-          <el-table-column prop="expireTime" label="使用到期日" width="120" show-overflow-tooltip>
+          <el-table-column prop="expireTime" width="200" label="使用到期日"  show-overflow-tooltip>
             <template slot-scope="scope">
+              <el-form-item
+
+              
+              >
               <el-date-picker
                 value-format="yyyy-MM-dd hh:mm:ss"
                 v-model="scope.row.expireTime"
                 type="date"
                 placeholder="选择使用到期日"
               ></el-date-picker>
+               </el-form-item>
             </template>
           </el-table-column>
           <el-table-column prop="personLiable" label="责任人" width="80" show-overflow-tooltip>
