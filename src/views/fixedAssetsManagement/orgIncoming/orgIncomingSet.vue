@@ -132,7 +132,6 @@
 
       <el-button
         @click="handleImportIncomingDetail"
-        icon="el-icon-circle-close"
         size="small"
         type="primary"
         plain
@@ -155,7 +154,7 @@
           :on-exceed="handleExceed"
           :before-upload="beforeAvatarUpload"
           :file-list="newfilepathList"
-        >模版导入</el-upload>
+        ><i class="el-icon-circle-close" style="margin-right: 8px;"></i>模版导入</el-upload>
       </el-button>
 
       <el-button
