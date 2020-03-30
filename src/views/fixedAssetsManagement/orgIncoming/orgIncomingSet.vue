@@ -534,7 +534,7 @@
       };
       var ModalcheckMaterial = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error());
+          callback(new Error());
         } else {
           checkMaterialCode(value).then(res => {
             if (res.results !== 0) {
@@ -1040,6 +1040,8 @@
       },
       // 文件上传之前
       beforeAvatarUpload(file) {
+        this.model.newfilepathList = []
+        // this.newfilepathList = []
         const isLt2M = file.size / 1024 / 1024 < 5;
         if (!isLt2M) {
           this.$message.error("上传文件大小不能超过 5MB!");
@@ -1058,18 +1060,21 @@
         console.log(response);
         console.log(file);
         console.log(fileList);
-        fileList.map(item => {
-          if (item.response) {
-            item.dataArr = item.response.results.data;
-          }
-        });
-        this.newfilepathList = fileList.map(v => v.dataArr)
+        // fileList.map(item => {
+        //   if (item.response) {
+        //     item.dataArr = item.response.results.data;
+        //   }
+        // });                     [{dataArr:[]}]
+        // this.newfilepathList = fileList.map(v => v.dataArr)
+        this.newfilepathList = fileList[0].response.results.data
         this.model.newfilepathList = JSON.parse(JSON.stringify(this.newfilepathList))
         console.log(this.model.newfilepathList)
         // this.model.newfilepathList.map(v=>{
         //   v.
         // })
         this.$message.success("文件上传成功");
+        this.newfilepathList = []
+        // fileList = []
       },
       //文件上传失败
       handleError(err, file, fileList) {
@@ -1116,7 +1121,7 @@
             row.averagePrice = 0;
 
           } else {
-
+             row.totalPrice = Number(row.quantityIn) * Number(row.averagePrice)
           }
         }
 
@@ -1131,7 +1136,8 @@
             row.quantityIn = 0;
 
           } else {
-
+             row.totalPrice = Number(row.quantityIn) * Number(row.averagePrice)
+            // row.totalPrice = row.quantityIn * row.averagePrice
           }
         }
 
@@ -1173,7 +1179,7 @@
       },
        handleExpireTime(row){
           console.log(row)
-         row[0].expireTime = row.expireTime
+         row.expireTime = row.expireTime
           //  let t = new Date(row.expireTime);
           // row[0].expireTime = t.getTime();
           // console.log(row.expireTime)
