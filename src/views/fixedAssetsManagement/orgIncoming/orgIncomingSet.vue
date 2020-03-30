@@ -523,6 +523,7 @@
         if (!value) {
           return callback(new Error("请输入固定资产编码"));
         } else {
+          
           checkMaterialCode(value).then(res => {
             if (res.results !== 0) {
               callback(new Error("固定资产物资编码不能重复"));
@@ -677,6 +678,7 @@
             ? JSON.parse(Auth.hasUserInfo()).companyId
             : ""
         },
+        cloneorgId:"",
         newfilepathList: [],
         searchForm: {
           appraiseStatus: "01",
@@ -810,29 +812,28 @@
       },
       //获取公司仓库
       changeManagerOrgs(q) {
-        //  if( this.cloneorgId  && this.details.length && this.searchForm.attachmentId){
-        //           this.$confirm(`您将更改项目名称，是否继续`, '确定', {
-        //               confirmButtonText: '确定',
-        //               cancelButtonText: '取消',
-        //               type: 'warning'
-        //           }).then(() => {
-        //               this.cloneorgId = q
-        //               this.details = []
-        //               this.searchForm.attachmentId = ""
-        //               getWarehouseListAll(this.searchForm.orgId).then(res => {
-        //                 this.warehouseListAll = res.results;
-        //               });
-        //           }).catch((e) => {
-        //               this.searchForm.orgId = this.cloneorgId
-        //               return
-        //           });
-        //       }else{
-        //           this.cloneProjectId = this.projectForm.projectId
-        //           this.getPmName()
-        //       }
-        getWarehouseListAll(this.searchForm.orgId).then(res => {
-          this.warehouseListAll = res.results;
-        });
+         if( this.cloneorgId  && this.details.length){
+                  this.$confirm(`切换公司后，之前保存的明细会被删除哦?`, '确定', {
+                      confirmButtonText: '确定',
+                      cancelButtonText: '取消',
+                      type: 'warning'
+                  }).then(() => {
+                      this.cloneorgId = q
+                      this.details = []
+                      getWarehouseListAll(this.searchForm.orgId).then(res => {
+                        this.warehouseListAll = res.results;
+                      });
+                  }).catch((e) => {
+                      this.searchForm.orgId = this.cloneorgId
+                      return
+                  });
+              }else{
+                  this.cloneorgId = this.searchForm.orgId
+                  getWarehouseListAll(this.searchForm.orgId).then(res => {
+                    this.warehouseListAll = res.results;
+                  });
+              }
+        
       },
       //添加明细
       handleAddDetails() {
@@ -939,6 +940,17 @@
         this.$refs[formName].validate(valid => {
           // console.log(valid)
           if (valid) {
+             let arr1 = this.model.newfilepathList.map(v=>v.materialCode)
+          let arr2 = Array.from(new Set(arr1))
+          if(arr1.length !== arr2.length){
+             this.$message.error("固定资产物资编码不能重复");
+                  return
+          }
+    
+     
+
+
+
             let data = {
               ...this.searchForm
             };
@@ -1057,6 +1069,10 @@
       },
       //文件上传成功
       handleSuccess(response, file, fileList) {
+        if(response.status !== 0){
+           this.$message.error("该文件不符合Excel导入标准，请获取Excel导入模板导入");
+           return
+        }
         console.log(response);
         console.log(file);
         console.log(fileList);
@@ -1093,21 +1109,24 @@
       },
       //保存模版弹窗
       submitImportanModal(formName) {
-        this.$refs[formName].validate(valid => {
-          console.log(valid);
-          if (valid) {
+        // this.$refs[formName].validate(valid => {
+        //   console.log(valid);
+        //   if (valid) {
+         
+         
             let arr = JSON.parse(JSON.stringify(this.model.newfilepathList))
             arr.forEach(v => {
               v.buyTime = v.buyTime ? new Date(v.buyTime).getTime() : ''
               v.expireTime = v.expireTime ? new Date(v.expireTime).getTime() : ''
             });
-            this.details.push(arr)
+           this.details =  this.details.concat(arr)
+            console.log(this.details)
             this.importantVisible = false;
-          } else {
-            console.log("error submit!!");
-            return false;
-          }
-        });
+        //   } else {
+        //     console.log("error submit!!");
+        //     return false;
+        //   }
+        // });
 
       },
       changeAveragePrice(row) {
