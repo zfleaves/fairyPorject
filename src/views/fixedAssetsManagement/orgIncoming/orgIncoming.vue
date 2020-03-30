@@ -130,7 +130,8 @@ import {
   getIncomingList,
   getWarehouseListAll,
   getStartNodeAssigneeUsers,
-  startIncomingWorkflow
+  startIncomingWorkflow,
+  exportexcelIncoming
 } from "api/fixedAssetsManagement";
 import ButtonComponent2 from "components/buttonComponent/buttonComponent2";
 import Pagination from "components/Pagination/page"
@@ -307,8 +308,35 @@ export default {
     handlePrint() {},
     //导出
     handleExport() {
-      exportExcelMethod('maintainConTable', "固定资产入库单明细", 'sheet');
-    }
+      let data = {
+        ...this.searchFrom,
+      }
+      data.pageNo = this.pageNo
+      data.pageSize = this.pageSize
+      exportexcelIncoming(data).then(res=>{
+         if (!res) {
+              return
+            }
+             // let blob = new Blob([res], {type: "application/vnd.ms-excel"});
+ 
+ 
+ 
+　　　　　　 // let objectUrl = URL.createObjectURL(blob);
+ 
+ 
+ 
+　　　　　　 // window.location.href = objectUrl;
+             let url = window.URL.createObjectURL(new Blob([res], {type: "application/vnd.ms-excel"}));
+                let link = document.createElement('a');
+                link.style.display = 'none';
+                link.href = url;
+                link.setAttribute('download', `固定资产入库单明细.xls`);
+                document.body.appendChild(link);
+                link.click()
+        })
+      // exportExcelMethod('maintainConTable', "固定资产入库单明细", 'sheet');
+    },
+
   }
 };
 </script>

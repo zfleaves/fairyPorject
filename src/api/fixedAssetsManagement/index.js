@@ -114,7 +114,13 @@ export function importIncomingDetail(data){
         data
     })
 }
-// companyId: 316
-// fileName: orgWarIncoming_detail_template_1565599651262.xls
-// file: (binary)
 
+//导出
+export function exportexcelIncoming(data){
+    return request({
+        url:'/contract/org/incoming/exportexcel',
+        method:'post',
+        responseType: 'arraybuffer',  // 加了这个后 下载的文件不会乱码
+        data
+    })
+}
