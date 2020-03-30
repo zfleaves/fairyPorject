@@ -438,6 +438,7 @@
             <template slot-scope="scope">
               <el-form-item>
                 <el-date-picker
+                @change="handleExpireTime(scope.row)"
                   value-format="yyyy-MM-dd hh:mm:ss"
                   v-model="scope.row.expireTime"
                   type="date" placeholder="选择使用到期日">
@@ -794,6 +795,7 @@
       this.flowStatus = this.type !== "info";
     },
     methods: {
+     
       //获取所属公司
       _getManagerOrgs() {
         getManagerOrgs().then(res => {
@@ -1146,10 +1148,11 @@
         } else {
           let year = row.buyTime.slice(0, 4);
           let time = row.buyTime.slice(4, 10);
-          let t = new Date(
-            Number(year) + Number(row.useYear) + time + " 00:00:00"
-          );
-          row.expireTime = t.getTime();
+          row.expireTime = Number(year) + Number(row.useYear) + time + " 00:00:00"
+          // let t = new Date(
+          //   Number(year) + Number(row.useYear) + time + " 00:00:00"
+          // );
+          // row.expireTime = t.getTime();
           console.log(row.expireTime)
         }
 
@@ -1160,14 +1163,21 @@
           let year = row.buyTime.slice(0, 4);
           let time = row.buyTime.slice(4, 10);
 
-          let t = new Date(
-            Number(year) + Number(row.useYear) + time + " 00:00:00"
-          );
-          row.expireTime = t.getTime();
+          // let t = new Date(
+          //   Number(year) + Number(row.useYear) + time + " 00:00:00"
+          // );
+          row.expireTime =  Number(year) + Number(row.useYear) + time + " 00:00:00" 
+          // t.getTime();
           console.log(row.expireTime)
         }
       },
-
+       handleExpireTime(row){
+          console.log(row)
+         row[0].expireTime = row.expireTime
+          //  let t = new Date(row.expireTime);
+          // row[0].expireTime = t.getTime();
+          // console.log(row.expireTime)
+      },
       setMoney() {
         this.detail.totalPrice =
           this.detail.quantityIn * this.detail.averagePrice;
